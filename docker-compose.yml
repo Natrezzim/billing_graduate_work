@@ -1,0 +1,36 @@
+services:
+
+  service:
+    container_name: billing_api
+    build:
+      context: api/src/app
+      dockerfile: ./Dockerfile
+    ports:
+      - 8010
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    container_name: billing_db
+    image: postgres:12.0-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+
+  nginx:
+    container_name: billing_nginx
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - service
+
+volumes:
+  postgres_data:
