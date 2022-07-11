@@ -20,5 +20,3 @@ EXPOSE 8010
 
 COPY . ./app
 
-RUN chmod +x /usr/src/app/entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

@@ -1,13 +1,12 @@
-
 import logging
 from pathlib import Path
 
 import uvicorn
 from app.core.config import Settings
+from app.custom_logging import CustomizeLogger
+from app.db.pg_db import test_connection
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-
-from app.custom_logging import CustomizeLogger
 
 settings = Settings()
 
@@ -40,6 +39,7 @@ app = create_app()
 
 @app.on_event('startup')
 async def startup():
+    await test_connection()
     logger.info("UP app")
 
 
@@ -47,5 +47,6 @@ async def startup():
 async def shutdown() -> None:
     logger.info("Shutdown app")
 
+
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000) # noqa S104
+    uvicorn.run(app, host='0.0.0.0', port=8000)  # noqa S104
