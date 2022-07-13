@@ -1,0 +1,34 @@
+@startuml
+!theme toy
+skinparam componentStyle uml2
+
+title "Сервис оплаты"
+
+actor "User" as user
+component "Payment System" as paysys
+component "Django\nAdmin" as billing_django
+component "Auth Service" as auth
+
+node "Сервис оплаты" as billing_service{
+
+database "PostgreSQL" as billing_postgres
+component "API" as billing_api
+
+component "Nginx" as billing_nginx
+component "ETL/Cron" as billing_etl
+billing_etl <---> billing_postgres
+billing_api <---> billing_nginx
+billing_api <-up-> paysys
+
+}
+
+billing_nginx <---> auth
+billing_api <---> billing_postgres
+billing_etl <-right-> billing_django
+auth <--> user
+
+legend left
+    |<#0000FF>     | Legend |
+end legend
+
+@enduml

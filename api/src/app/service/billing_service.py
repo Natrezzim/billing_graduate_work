@@ -1,9 +1,8 @@
 from functools import lru_cache
 
-from fastapi import Depends
-
 from app.db.postgres import AsyncSession, get_session
 from app.models.billing_models import Payments, PaymentsCreate
+from fastapi import Depends
 
 
 class PaymentsService:

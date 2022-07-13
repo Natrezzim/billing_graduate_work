@@ -2,14 +2,12 @@ import logging
 from pathlib import Path
 
 import uvicorn
+from app.api.v1 import billing_api
 from app.core.config import Settings
 from app.custom_logging import CustomizeLogger
+from app.db.postgres import test_connection, init_db
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-
-from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import create_async_engine
-from app.api.v1 import billing_api
 
 from yookassa import Configuration
 
@@ -19,15 +17,8 @@ logger = logging.getLogger(__name__)
 
 config_path = Path(__file__).with_name("logging_config.json")
 
-
 Configuration.account_id = settings.yookassa_account_id
 Configuration.secret_key = settings.yookassa_secret_key
-engine = create_async_engine(settings.database_url, echo=True, future=True)
-
-
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
 
 
 def create_app() -> FastAPI:
@@ -54,6 +45,7 @@ app = create_app()
 
 @app.on_event('startup')
 async def startup():
+    await test_connection()
     await init_db()
 
 
