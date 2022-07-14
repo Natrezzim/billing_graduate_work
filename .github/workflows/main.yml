@@ -12,6 +12,6 @@ jobs:
         env:
           KEY_JSON: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           REGISTRY_ID: crpis5t0f3nv1ncr2fe9
-          DOCKERFILE_PATH: api/src/app/
+          DOCKERFILE_PATH: api/src/app/Dockerfile
           IMAGE_NAME: billing_api
           IMAGE_TAG: ${{ github.sha }}
