@@ -1,18 +1,26 @@
 name: CI
 
 on:
+
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+
   workflow_dispatch:
 
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
+
+
       - name: Yandex Cloud CR "Login" Action for GitHub Actions
         uses: yc-actions/yc-cr-login@v0.1-alpha
         with:
