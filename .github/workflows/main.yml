@@ -38,7 +38,7 @@ jobs:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: b1gnn1cdso7c6e7ma8rp
           VM-name: ubuntu20-billing-coi
-          vm-service-account-id: ajed3rsup63r16krc624
+          vm-service-account-id: ajejfodg7dvfe92vh0vv
           vm-subnet-id: e9bcllc4me68a9dtjci0
           user-data-path: './user-data.yaml'
           docker-compose-path: './docker-compose.yml'
