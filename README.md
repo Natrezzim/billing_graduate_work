@@ -32,6 +32,24 @@ balance???
 
 • Реализовываем функцию зачисления средств на баланс после оплаты.
 
+Создаем платеж:
+```
+{
+    "value": 1342.00,
+    "currency": "RUB",
+    "description": "Оплата подписки"
+}
+```
+
+Отправляем POST-запрос на адрес:
+```
+http://127.0.0.1:8000/api/v1/payment
+```
+
+В ответ получаем **confirmation_url**
+по которому должен проследовать пользователь и произвести оплату
+
+
 
 Списание средств 
 -
@@ -84,3 +102,4 @@ https://fingers.by/blog/how-to-integrate-a-payment-gateway-part-1 часть 1
 https://fingers.by/blog/how-to-integrate-a-payment-gateway-part-2 часть 2  
 https://stripe.com/docs/api?lang=python Stripe документация  
 https://medium.com/@mishraranjeet122/integrate-stripe-payment-with-a-card-in-python-e90989d39bca Stripe интеграция
+https://habr.com/ru/post/580866/ Как настроить SQLAlchemy, SQLModel и Alembic для асинхронной работы с FastAPI

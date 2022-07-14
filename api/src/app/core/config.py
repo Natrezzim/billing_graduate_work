@@ -12,5 +12,8 @@ class Settings(BaseSettings):
     db_user: str = Field('postgres', env='POSTGRES_USER')
     db_password: str = Field('1234', env='POSTGRES_PASSWORD')
 
+    yookassa_account_id: int = Field('924950', env='YOOKASSA_ACCOUNT_ID')
+    yookassa_secret_key: str = Field('test_JAcHY0noVjN5FuiIXRGasyUm0PrRb1H04fwKTMz9tss', env='YOOKASSA_SECRET_KEY')
+
     class Config:
         env_file = ".env"
