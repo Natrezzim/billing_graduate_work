@@ -19,4 +19,4 @@ RUN pip install --upgrade pip \
 EXPOSE 8010
 
 COPY . ./app
-
+COPY /.env ./app

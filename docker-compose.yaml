@@ -1,17 +1,13 @@
-version: '3'
+version: '3.7'
 
 services:
 
   service:
     container_name: billing_api
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-api:latest
     entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log
-    build:
-      context: api/src/app
-      dockerfile: ./Dockerfile
     ports:
       - "8010"
-    env_file:
-      - .env
     depends_on:
       - db
 
@@ -22,14 +18,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - .env
 
   nginx:
     container_name: billing_nginx
-    build:
-      context: ./nginx
-      dockerfile: ./Dockerfile
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-nginx:latest
     ports:
       - "80:80"
     depends_on:
