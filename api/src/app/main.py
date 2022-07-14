@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 
 import uvicorn
@@ -36,6 +37,7 @@ def create_app() -> FastAPI:
     )
     logger = CustomizeLogger.make_logger(config_path)
     app.logger = logger
+    os.system('./migrations/alembic upgrade head')
 
     return app
 
