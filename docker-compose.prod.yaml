@@ -4,7 +4,7 @@ services:
 
   service:
     container_name: billing_api
-    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-api:latest
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-api:1.0.0
     entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log
     ports:
       - "8010"
@@ -21,7 +21,7 @@ services:
 
   nginx:
     container_name: billing_nginx
-    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-nginx:latest
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-nginx:1.0.0
     ports:
       - "80:80"
     depends_on:

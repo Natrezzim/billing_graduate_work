@@ -1,10 +1,10 @@
 .DEFAULT_GOAL := help
-DOCKER_PROD = docker-compose.yml
+DOCKER_PROD = docker-compose.dev.yaml
 STACK_NAME = "Billing"
 #####---PROD---#####
 help:
 	$(info ------------------------------------------------------------------------------------------------------------------------------)
-	$(info "#####---PROD---#####" (build, up, build_up, start, down, destroy, stop, restart))
+	$(info "#####---DEV---#####" (build, up, build_up, start, down, destroy, stop, restart))
 	$(info ------------------------------------------------------------------------------------------------------------------------------)
 build:
 	docker-compose -p ${STACK_NAME} -f ${DOCKER_PROD} build
