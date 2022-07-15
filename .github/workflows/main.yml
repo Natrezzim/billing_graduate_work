@@ -42,6 +42,16 @@ jobs:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-repo
           IMAGE_TAG: ${{ github.sha }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          YOOKASSA_ACCOUNT_ID: ${{ secrets.YOOKASSA_ACCOUNT_ID }}
+          YOOKASSA_SECRET_KEY: ${{ secrets.YOOKASSA_SECRET_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: b1gnn1cdso7c6e7ma8rp
