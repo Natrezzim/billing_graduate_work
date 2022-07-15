@@ -3,8 +3,6 @@ name: CI
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -17,14 +15,22 @@ jobs:
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
 
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-api
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f api/src/app/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./api/src/app
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
       - name: Build, tag, and push image to Yandex Cloud Container Registry
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
-          CR_REPOSITORY: billing-repo
+          CR_REPOSITORY: billing-nginx
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          DOCKER_BUILDKIT=1 docker build -f api/src/app/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./api/src/app
+          DOCKER_BUILDKIT=1 docker build -f nginx/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./nginx
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
       - name: Deploy COI VM
@@ -34,14 +40,21 @@ jobs:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-repo
           IMAGE_TAG: ${{ github.sha }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          YOOKASSA_ACCOUNT_ID: ${{ secrets.YOOKASSA_ACCOUNT_ID }}
+          YOOKASSA_SECRET_KEY: ${{ secrets.YOOKASSA_SECRET_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: b1gnn1cdso7c6e7ma8rp
-          VM-name: ubuntu20billing
-          vm-service-account-id: ajed3rsup63r16krc624
-          vm-cores: 1
-          vm-memory: 512Mb
-          vm-core-fraction: 100
+          VM-name: ubuntu20-billing-ci
+          vm-service-account-id: ajejfodg7dvfe92vh0vv
           vm-subnet-id: e9bcllc4me68a9dtjci0
           user-data-path: './user-data.yaml'
-          docker-compose-path: './docker-compose.yaml'
+          docker-compose-path: './docker-compose.prod.yaml'
