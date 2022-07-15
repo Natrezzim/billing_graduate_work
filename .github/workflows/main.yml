@@ -21,7 +21,7 @@ jobs:
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-api
-          IMAGE_TAG: 1.0.0
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           DOCKER_BUILDKIT=1 docker build -f api/src/app/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./api/src/app
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
@@ -30,7 +30,7 @@ jobs:
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-nginx
-          IMAGE_TAG: 1.0.0
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           DOCKER_BUILDKIT=1 docker build -f nginx/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./nginx
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
