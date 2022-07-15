@@ -8,6 +8,25 @@ from yookassa import Payment
 router = APIRouter()
 
 
+@router.get('/payment')
+async def get_payments():
+    '''
+    Получить список последних 10 платежей
+    '''
+    params = {'limit': 10}
+    payment_list = Payment.list(params)
+    return payment_list
+
+
+@router.get('/payment/{payment_id}')
+async def get_payment_by_id(payment_id: str):
+    '''
+    Получить платеж по payment_id
+    '''
+    payment = Payment.find_one(payment_id)
+    return payment
+
+
 @router.post('/payment')
 async def transaction_test(payment_data: PaymentsCreate,
                            transaction: PaymentsService = Depends(get_payments_service)):
