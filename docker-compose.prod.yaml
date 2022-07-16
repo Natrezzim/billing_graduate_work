@@ -44,7 +44,6 @@ services:
     volumes:
       - certbot-conf:/etc/letsencrypt/:rw
       - certbot-www:/var/www/certbot/:rw
-    command: certonly --webroot --webroot-path /var/www/certbot/ -d moviesbilling.ddns.net --non-interactive --agree-tos --register-unsafely-without-email --staging
 
 volumes:
   postgres_data:
