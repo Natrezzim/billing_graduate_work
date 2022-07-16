@@ -38,15 +38,12 @@ services:
       - certbot-www:/var/www/certbot/:ro
     ports:
       - "80:80"
-    network_mode: container:proxy_nginx_1
 
   certbot:
     image: certbot/certbot
     volumes:
       - certbot-conf:/etc/letsencrypt/:rw
       - certbot-www:/var/www/certbot/:rw
-    ports:
-      - "4088:80"
     command:
       - certonly
       - --non-interactive
@@ -58,6 +55,7 @@ services:
       - 80
       - -d
       - moviesbilling.ddns.net
+    network_mode: container:proxy_nginx_1
 
 volumes:
   postgres_data:
