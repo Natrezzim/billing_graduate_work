@@ -38,16 +38,26 @@ services:
       - certbot-www:/var/www/certbot/:ro
     ports:
       - "80:80"
-    depends_on:
-      - service
+    network_mode: container:proxy_nginx_1
 
   certbot:
     image: certbot/certbot
     volumes:
       - certbot-conf:/etc/letsencrypt/:rw
       - certbot-www:/var/www/certbot/:rw
-
-    command: certonly --webroot --webroot-path /var/www/certbot/ -d moviesbilling.ddns.net --non-interactive --agree-tos --register-unsafely-without-email --staging
+    ports:
+      - "4088:80"
+    command:
+      - certonly
+      - --non-interactive
+      - --agree-tos
+      - --register-unsafely-without-email
+      - --preferred-challenges
+      - http-01
+      - --http-01-port
+      - 80
+      - -d
+      - moviesbilling.ddns.net
 
 volumes:
   postgres_data:
