@@ -33,10 +33,23 @@ services:
   nginx:
     container_name: billing_nginx
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-nginx:{{ env.IMAGE_TAG }}
+    volumes:
+      - certbot-conf:/etc/nginx/ssl/:ro
+      - certbot-www:/var/www/certbot/:ro
     ports:
       - "80:80"
     depends_on:
       - service
 
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot-conf:/etc/letsencrypt/:rw
+      - certbot-www:/var/www/certbot/:rw
+
+    command: certonly --webroot --webroot-path /var/www/certbot/ -d localhost --non-interactive --agree-tos --register-unsafely-without-email --staging
+
 volumes:
   postgres_data:
+  certbot-conf:
+  certbot-www:
