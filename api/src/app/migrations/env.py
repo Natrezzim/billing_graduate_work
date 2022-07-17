@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -5,14 +6,18 @@ from sqlalchemy import pool
 
 from sqlmodel import SQLModel
 from alembic import context
-from app.core.config import Settings
 
-set = Settings()
+
+db_driver: str = os.getenv('DRIVER', 'postgresql')
+db_host: str = os.getenv('DB_HOST', 'localhost')
+db_port: str = os.getenv('DB_PORT', '5432')
+db_name: str = os.getenv('POSTGRES_DB', 'billing_db')
+db_user: str = os.getenv('POSTGRES_USER', 'postgres')
+db_password: str = os.getenv('POSTGRES_PASSWORD', '11111111')
+
 config = context.config
 
-config.set_main_option(
-    'sqlalchemy.url', f'{set.db_driver}://{set.db_user}:{set.db_password}@{set.db_host}:{set.db_port}/{set.db_name}'
-)
+config.set_main_option('sqlalchemy.url', f'{db_driver}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}')
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
