@@ -58,6 +58,7 @@ def upgrade() -> None:
         sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False,
                   server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')),
+        sa.UniqueConstraint('product_id', 'currency', name='product_currency_uix')
     )
     op.create_table(
         'cart',
@@ -79,3 +80,8 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table('payments')
     op.drop_table('status')
+    op.drop_table('products')
+    op.drop_table('prices')
+    op.drop_table('cart')
+    op.drop_table('products_to_cart')
+
