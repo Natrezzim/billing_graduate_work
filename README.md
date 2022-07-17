@@ -108,7 +108,12 @@ last_hourly_billing, где указываем время последней п�
 
 JWT token - payload user_id
 
-Стати
+CI/CD
+-
+Сервис развернут в яндекс облаке
+Доступен по статическому адресу 51.250.91.209 moviesbilling.ddns.net
+
+Статьи
 -
 https://habr.com/ru/company/bitcalm/blog/234861/  
 https://fingers.by/blog/how-to-integrate-a-payment-gateway-part-1 часть 1  
