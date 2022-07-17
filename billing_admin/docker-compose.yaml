@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: billing_admin_db
+    image: postgres:13
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ../.env
+
+  backend:
+    container_name: backend_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: billing_admin:latest
+    pull_policy: never
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - static_volume:/billing/static/
+    depends_on:
+      - prepare_to_deploy
+    env_file:
+      - ../.env
+
+  prepare_to_deploy:
+    container_name: prepare_app
+    image: billing_admin:latest
+    pull_policy: never
+    restart: "no"
+    command: >
+          bash -c "sleep 5;
+          python manage.py migrate --noinput;
+          python manage.py createsuperuser --noinput;
+          python manage.py collectstatic --noinput"
+    volumes:
+      - static_volume:/billing/static/
+    depends_on:
+      - db
+    env_file:
+      - ../.env
+
+
+  nginx:
+    container_name: nginx_2
+    image: nginx:stable
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/site.conf:/etc/nginx/conf.d/site.conf:ro
+      - ./nginx/custom_50x.html:/etc/nginx/html/50x.html
+      - static_volume:/data/static/
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+    name: billing_db
+  static_volume:
+    name: billing_static
