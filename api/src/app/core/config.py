@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     yookassa_account_id: int = Field('924950', env='YOOKASSA_ACCOUNT_ID')
     yookassa_secret_key: str = Field('test_JAcHY0noVjN5FuiIXRGasyUm0PrRb1H04fwKTMz9tss', env='YOOKASSA_SECRET_KEY')
+    yookassa_access_token: str = Field('AAEACFY1AEGN1AAAAYIS464YODN6gzOk7JHDiA3qIZSMeafVj6SMd0aJsWU9auLuT7EI9PylypRgRYugMBJ618fD', env='YOOKASSA_ACCESS_TOKEN')
 
     class Config:
         env_file = ".env"
