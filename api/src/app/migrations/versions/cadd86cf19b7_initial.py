@@ -62,15 +62,14 @@ def upgrade() -> None:
         'cart',
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
         sa.Column('username', sa.VARCHAR(100), nullable=False),
-        sa.Column('created_at', sa.DateTime, server_default=sa.func.current_timestamp()),
+        sa.Column('created_at', sa.TIMESTAMP, server_default=sa.func.current_timestamp()),
     )
     op.create_table(
         'products_to_cart',
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
         sa.Column('product_id', postgresql.UUID(as_uuid=True), sa.ForeignKey('products.id'), nullable=False),
         sa.Column('cart_id', postgresql.UUID(as_uuid=True), sa.ForeignKey('cart.id'), nullable=False),
-        sa.Column('username', sa.VARCHAR(100), nullable=False),
-        sa.Column('created_at', sa.DateTime, server_default=sa.func.current_timestamp()),
+        sa.Column('created_at', sa.TIMESTAMP, server_default=sa.func.current_timestamp()),
         sa.UniqueConstraint('product_id', 'cart_id', name='product_cart_uix')
     )
 

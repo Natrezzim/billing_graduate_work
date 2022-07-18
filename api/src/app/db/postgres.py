@@ -6,13 +6,14 @@ from sqlmodel import SQLModel
 from app.core.config import Settings
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 settings = Settings()
 
 DATABASE_URL = f'postgresql+asyncpg://{settings.db_user}:{settings.db_password}@{settings.db_host}' \
                f':{settings.db_port}/{settings.db_name}'
+
+Base = declarative_base()
 
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
