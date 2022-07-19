@@ -20,7 +20,7 @@ config_path = Path(__file__).with_name("logging_config.json")
 
 Configuration.account_id = settings.yookassa_account_id
 Configuration.secret_key = settings.yookassa_secret_key
-Configuration.configure_auth_token = settings.yookassa_access_token
+Configuration.configure_auth_token(settings.yookassa_access_token)
 
 
 def create_app() -> FastAPI:
