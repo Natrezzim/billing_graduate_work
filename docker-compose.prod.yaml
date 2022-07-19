@@ -14,6 +14,7 @@ services:
       DB_PORT: {{ env.DB_PORT }}
       YOOKASSA_ACCOUNT_ID: {{ env.YOOKASSA_ACCOUNT_ID }}
       YOOKASSA_SECRET_KEY: {{ env.YOOKASSA_SECRET_KEY }}
+      YOOKASSA_ACCESS_TOKEN: {{ env.YOOKASSA_ACCESS_TOKEN }}
       DATABASE_URL: {{ env.DATABASE_URL }}
     depends_on:
       - db
