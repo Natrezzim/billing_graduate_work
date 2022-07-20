@@ -23,9 +23,6 @@ services:
   auth_service:
     container_name: auth_api
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-auth:{{ env.IMAGE_TAG }}
-    build:
-      context: auth_api/src
-      dockerfile: ./Dockerfile
     environment:
       FLASK_APP: src/app/app.py
       POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
@@ -78,9 +75,6 @@ services:
   db:
     container_name: billing_db
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-postgres:{{ env.IMAGE_TAG }}
-    build:
-      context: postgres
-      dockerfile: ./Dockerfile
     ports:
       - "5432:5432"
     environment:
