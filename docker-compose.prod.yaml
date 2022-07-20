@@ -64,14 +64,15 @@ services:
   redis:
     container_name: redis_auth
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-redis:{{ env.IMAGE_TAG }}
-    depends_on:
-      - auth_service
     ports:
       - "6380:6380"
+    depends_on:
+      - auth_service
 
   db:
     container_name: billing_db
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-postgres:{{ env.IMAGE_TAG }}
+    command: chmod +x docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
     ports:
       - "5432:5432"
     environment:
@@ -84,7 +85,6 @@ services:
   nginx:
     container_name: billing_nginx
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-nginx:{{ env.IMAGE_TAG }}
-    command: chmod +x docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
     volumes:
       - certbot-conf:/etc/nginx/ssl/:ro
       - certbot-www:/var/www/certbot/:ro
