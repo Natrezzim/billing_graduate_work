@@ -49,6 +49,7 @@ jobs:
           DB_PORT: ${{ secrets.DB_PORT }}
           YOOKASSA_ACCOUNT_ID: ${{ secrets.YOOKASSA_ACCOUNT_ID }}
           YOOKASSA_SECRET_KEY: ${{ secrets.YOOKASSA_SECRET_KEY }}
+          YOOKASSA_ACCESS_TOKEN: ${{ secrets.YOOKASSA_ACCESS_TOKEN }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
