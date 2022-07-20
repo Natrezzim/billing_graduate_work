@@ -51,6 +51,15 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f postgres/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./postgres
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG   
 
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-redis
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f auth_api/redis/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./auth_api/redis
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
       - name: Deploy COI VM
         id: deploy-coi
         uses: yc-actions/yc-coi-deploy@v1
