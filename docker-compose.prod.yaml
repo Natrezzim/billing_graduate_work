@@ -80,7 +80,6 @@ services:
       POSTGRES_USER: {{ env.POSTGRES_USER }}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb
 
   nginx:
     container_name: billing_nginx
