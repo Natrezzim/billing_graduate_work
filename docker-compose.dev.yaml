@@ -23,7 +23,7 @@ services:
     environment:
       FLASK_APP: src/app/app.py
     entrypoint: >
-      sh -c "python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
+      sh -c "python src/app/utils/wait_for_pg.py && python src/app/utils/wait_for_redis.py && python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
     expose:
       - "8001"
     env_file:

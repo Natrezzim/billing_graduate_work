@@ -48,7 +48,7 @@ services:
       JAEGER_PORT: {{ env.JAEGER_PORT }}
       XCAPTCHA_SITE_KEY: {{ env.XCAPTCHA_SITE_KEY }}
       XCAPTCHA_SECRET_KEY: {{ env.XCAPTCHA_SECRET_KEY }}
-    entrypoint: sh -c "python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
+    entrypoint: sh -c "python src/app/utils/wait_for_pg.py && python src/app/utils/wait_for_redis.py && python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
     expose:
       - "8001"
     depends_on:
