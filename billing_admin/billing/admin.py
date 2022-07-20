@@ -4,7 +4,9 @@ import pytz
 from config import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_json_widget.widgets import JSONEditorWidget
 
 from .models import Payment
 
@@ -69,13 +71,23 @@ class CreatedListFilter(DateListFilter):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'provider', 'date', 'paid', 'cart')
-    list_filter = ('provider', CreatedListFilter)
-    search_fields = ('id', 'username', 'provider', 'date', 'paid', 'cart')
+
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+    list_display = (
+        'id', 'username', 'provider', 'date', 'paid', 'payment_status',
+    )
+    list_filter = ('provider', CreatedListFilter, 'paid', 'payment_status',)
+    search_fields = (
+        'id', 'username', 'provider', 'created_at', 'paid', 'cart',
+    )
     ordering = ('created_at',)
-    readonly_fields = ('id', 'created_at', 'updated_at', 'cart')
+    readonly_fields = ('id', 'created_at', 'updated_at')
     fields = (('id', 'created_at', 'updated_at'),
-              ('username', 'provider', 'paid'),
+              'username',
+              ('provider', 'payment_status', 'paid'),
               'cart',)
 
     def date(self, obj):
