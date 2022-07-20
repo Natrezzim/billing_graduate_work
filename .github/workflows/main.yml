@@ -33,6 +33,25 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f nginx/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./nginx
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-auth
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f auth_api/src/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./auth_api/src/
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
+       - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-postgres
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f postgres/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./postgres
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG   
+      
+
       - name: Deploy COI VM
         id: deploy-coi
         uses: yc-actions/yc-coi-deploy@v1
@@ -41,16 +60,42 @@ jobs:
           CR_REPOSITORY: billing-repo
           IMAGE_TAG: ${{ github.sha }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          # Postgres
+          POSTGRES_MULTIPLE_DATABASES: ${{ secrets.POSTGRES_MULTIPLE_DATABASES }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          # Billing srvice
           PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_HOST_BILLING: ${{ secrets.DB_HOST_BILLING }}
+          DB_PORT_BILLING: ${{ secrets.DB_PORT_BILLING }}
+          DB_NAME_BILLING: ${{ secrets.DB_NAME_BILLING }}
           YOOKASSA_ACCOUNT_ID: ${{ secrets.YOOKASSA_ACCOUNT_ID }}
           YOOKASSA_SECRET_KEY: ${{ secrets.YOOKASSA_SECRET_KEY }}
           YOOKASSA_ACCESS_TOKEN: ${{ secrets.YOOKASSA_ACCESS_TOKEN }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # Auth service
+          DB_HOST_AUTH: ${{ secrets.DB_HOST_AUTH }}
+          DB_PORT_AUTH: ${{ secrets.DB_PORT_AUTH }}
+          DB_NAME_AUTH: ${{ secrets.DB_NAME_AUTH }}
+          ACCESS_TOKEN_EXPIRED: ${{ secrets.ACCESS_TOKEN_EXPIRED }}
+          REFRESH_TOKEN_EXPIRED: ${{ secrets.REFRESH_TOKEN_EXPIRED }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          ROLE_START_PAGE: ${{ secrets.ROLE_START_PAGE }}
+          ROLE_PAGE_LIMIT: ${{ secrets.ROLE_PAGE_LIMIT }}
+          AUTH_HISTORY_START_PAGE: ${{ secrets.AUTH_HISTORY_START_PAGE }}
+          AUTH_HISTORY__PAGE_LIMIT: ${{ secrets.AUTH_HISTORY__PAGE_LIMIT }}
+          YANDEX_CLIENT_ID: ${{ secrets.YANDEX_CLIENT_ID }}
+          YANDEX_CLIENT_SECRET: ${{ secrets.YANDEX_CLIENT_SECRET }}
+          YANDEX_AUTHORIZE_URL: ${{ secrets.YANDEX_AUTHORIZE_URL }}
+          YANDEX_ACCESS_TOKEN_URL: ${{ secrets.YANDEX_ACCESS_TOKEN_URL }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REQUEST_LIMIT_PER_MINUTE: ${{ secrets.REQUEST_LIMIT_PER_MINUTE }}
+          JAEGER_HOST: ${{ secrets.JAEGER_HOST }}
+          JAEGER_PORT: ${{ secrets.JAEGER_PORT }}
+          XCAPTCHA_SITE_KEY: ${{ secrets.XCAPTCHA_SITE_KEY }}
+          XCAPTCHA_SECRET_KEY: ${{ secrets.XCAPTCHA_SECRET_KEY }}
+
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: b1gnn1cdso7c6e7ma8rp
