@@ -28,6 +28,8 @@ services:
       dockerfile: ./Dockerfile
     environment:
       FLASK_APP: src/app/app.py
+      POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
+      POSTGRES_USER: {{ env.POSTGRES_USER }}
       DB_HOST_AUTH: {{ env.DB_HOST_AUTH }}
       DB_PORT_AUTH: {{ env.DB_PORT_AUTH }}
       DB_NAME_AUTH: {{ env.DB_NAME_AUTH }}
