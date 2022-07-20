@@ -72,7 +72,6 @@ services:
   db:
     container_name: billing_db
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-postgres:{{ env.IMAGE_TAG }}
-    command: chmod +x docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
     ports:
       - "5432:5432"
     environment:
@@ -81,6 +80,7 @@ services:
       POSTGRES_USER: {{ env.POSTGRES_USER }}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh:/docker-entrypoint-initdb
 
   nginx:
     container_name: billing_nginx
