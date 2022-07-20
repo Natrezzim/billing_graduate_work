@@ -69,14 +69,14 @@ class CreatedListFilter(DateListFilter):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'payment_system', 'cart_id', 'date')
-    list_filter = ('payment_system', CreatedListFilter)
-    search_fields = ('id', 'payment_system', 'cart_id', 'date')
+    list_display = ('id', 'username', 'provider', 'date', 'paid', 'cart')
+    list_filter = ('provider', CreatedListFilter)
+    search_fields = ('id', 'username', 'provider', 'date', 'paid', 'cart')
     ordering = ('created_at',)
-    readonly_fields = ('id', 'created_at')
-    fields = (('id', 'created_at'),
-              'cart_id',
-              ('payment_system', 'idempotence_uuid'),)
+    readonly_fields = ('id', 'created_at', 'updated_at', 'cart')
+    fields = (('id', 'created_at', 'updated_at'),
+              ('username', 'provider', 'paid'),
+              'cart',)
 
     def date(self, obj):
         return obj.created_at.date()
