@@ -94,7 +94,6 @@ jobs:
           JAEGER_PORT: ${{ secrets.JAEGER_PORT }}
           XCAPTCHA_SITE_KEY: ${{ secrets.XCAPTCHA_SITE_KEY }}
           XCAPTCHA_SECRET_KEY: ${{ secrets.XCAPTCHA_SECRET_KEY }}
-
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: b1gnn1cdso7c6e7ma8rp

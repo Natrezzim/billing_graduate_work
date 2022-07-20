@@ -20,41 +20,6 @@ services:
     depends_on:
       - db
 
-  auth_service:
-    container_name: auth_api
-    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-auth:{{ env.IMAGE_TAG }}
-    environment:
-      FLASK_APP: src/app/app.py
-      POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
-      POSTGRES_USER: {{ env.POSTGRES_USER }}
-      DB_HOST_AUTH: {{ env.DB_HOST_AUTH }}
-      DB_PORT_AUTH: {{ env.DB_PORT_AUTH }}
-      DB_NAME_AUTH: {{ env.DB_NAME_AUTH }}
-      ACCESS_TOKEN_EXPIRED: {{ env.ACCESS_TOKEN_EXPIRED }}
-      REFRESH_TOKEN_EXPIRED: {{ env.REFRESH_TOKEN_EXPIRED }}
-      JWT_SECRET_KEY: {{ env.JWT_SECRET_KEY }}
-      ROLE_START_PAGE: {{ env.ROLE_START_PAGE }}
-      ROLE_PAGE_LIMIT: {{ env.ROLE_PAGE_LIMIT }}
-      AUTH_HISTORY_START_PAGE: {{ env.AUTH_HISTORY_START_PAGE }}
-      AUTH_HISTORY__PAGE_LIMIT: {{ env.AUTH_HISTORY__PAGE_LIMIT }}
-      YANDEX_CLIENT_ID: {{ env.YANDEX_CLIENT_ID }}
-      YANDEX_CLIENT_SECRET: {{ env.YANDEX_CLIENT_SECRET }}
-      YANDEX_AUTHORIZE_URL: {{ env.YANDEX_AUTHORIZE_URL }}
-      YANDEX_ACCESS_TOKEN_URL: {{ env.YANDEX_ACCESS_TOKEN_URL }}
-      REDIS_HOST: {{ env.REDIS_HOST }}
-      REDIS_PORT: {{ env.REDIS_PORT }}
-      REQUEST_LIMIT_PER_MINUTE: {{ env.REQUEST_LIMIT_PER_MINUTE }}
-      JAEGER_HOST: {{ env.JAEGER_HOST }}
-      JAEGER_PORT: {{ env.JAEGER_PORT }}
-      XCAPTCHA_SITE_KEY: {{ env.XCAPTCHA_SITE_KEY }}
-      XCAPTCHA_SECRET_KEY: {{ env.XCAPTCHA_SECRET_KEY }}
-    entrypoint: >
-      sh -c "python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
-    expose:
-      - "8001"
-    depends_on:
-      - db
-
   jaeger:
     container_name: jaeger_auth
     image: jaegertracing/all-in-one:latest
