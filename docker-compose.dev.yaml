@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
 
@@ -15,9 +15,44 @@ services:
     depends_on:
       - db
 
+  auth_service:
+    container_name: auth_api
+    build:
+      context: auth_api/src
+      dockerfile: ./Dockerfile
+    environment:
+      FLASK_APP: src/app/app.py
+    entrypoint: >
+      sh -c "python src/app/utils/wait_for_pg.py && python src/app/utils/wait_for_redis.py && python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
+    expose:
+      - "8001"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  jaeger:
+    container_name: jaeger_auth
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6833:6833/udp"
+      - "16686:16686"
+
+  redis:
+    container_name: redis_auth
+    build:
+      context: auth_api/redis
+      dockerfile: ./Dockerfile
+    depends_on:
+      - auth_service
+    ports:
+      - "6380:6380"
+
   db:
     container_name: billing_db
-    image: postgres:12.0-alpine
+    build:
+      context: postgres
+      dockerfile: ./Dockerfile
     ports:
       - "5432:5432"
     volumes:
