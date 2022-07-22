@@ -54,6 +54,26 @@ services:
     depends_on:
       - db
 
+  admin_service:
+    container_name: admin_django
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-admin:{{ env.IMAGE_TAG }}
+    environment:
+      DB_HOST_ADMIN: {{ env.DB_HOST_ADMIN }}
+      DB_PORT_ADMIN: {{ env.DB_PORT_ADMIN }}
+      DB_NAME_ADMIN: {{ env.DB_NAME_ADMIN }}
+      DJANGO_SECRET_KEY: {{ env.DJANGO_SECRET_KEY }}
+      DJANGO_ALLOWED_HOSTS: {{ env.DJANGO_ALLOWED_HOSTS }}
+      DJANGO_DEBUG_FLAG: {{ env.DJANGO_DEBUG_FLAG }}
+      DJANGO_SUPERUSER_USERNAME: {{ env.DJANGO_SUPERUSER_USERNAME }}
+      DJANGO_SUPERUSER_PASSWORD: {{ env.DJANGO_SUPERUSER_PASSWORD }}
+      DJANGO_SUPERUSER_EMAIL: {{ env.DJANGO_SUPERUSER_EMAIL }}
+    volumes:
+      - static_volume:/billing/static
+    expose:
+      - "8011"
+    depends_on:
+      - db
+
   jaeger:
     container_name: jaeger_auth
     image: jaegertracing/all-in-one:latest
@@ -87,6 +107,7 @@ services:
     volumes:
       - certbot-conf:/etc/nginx/ssl/:ro
       - certbot-www:/var/www/certbot/:ro
+      - static_volume:/home/app/static
     ports:
       - "80:80"
       - "443:443"
@@ -106,3 +127,4 @@ volumes:
   postgres_data:
   certbot-conf:
   certbot-www:
+  static_volume:

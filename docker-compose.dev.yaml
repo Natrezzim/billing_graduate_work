@@ -31,6 +31,20 @@ services:
     depends_on:
       - db
 
+  admin_service:
+    container_name: admin_django
+    build:
+      context: admin
+      dockerfile: ./Dockerfile
+    volumes:
+      - static_volume:/billing/static
+    expose:
+      - "8011"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
   jaeger:
     container_name: jaeger_auth
     image: jaegertracing/all-in-one:latest
@@ -65,6 +79,8 @@ services:
     build:
       context: ./nginx
       dockerfile: ./Dockerfile.dev
+    volumes:
+      - static_volume:/home/app/static
     ports:
       - "80:80"
     depends_on:
@@ -72,3 +88,4 @@ services:
 
 volumes:
   postgres_data:
+  static_volume:
