@@ -1,6 +1,6 @@
 from yookassa import Webhook
 from fastapi import APIRouter, Request, Depends
-from service.webhook_service import PaymentStatusService, get_payments_status_service
+from app.service.webhook_service import PaymentStatusService, get_payments_status_service
 
 router = APIRouter()
 
