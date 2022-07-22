@@ -61,6 +61,8 @@ services:
       DB_HOST_ADMIN: {{ env.DB_HOST_ADMIN }}
       DB_PORT_ADMIN: {{ env.DB_PORT_ADMIN }}
       DB_NAME_ADMIN: {{ env.DB_NAME_ADMIN }}
+      POSTGRES_PASSWORD: { { env.POSTGRES_PASSWORD } }
+      POSTGRES_USER: { { env.POSTGRES_USER } }
       DJANGO_SECRET_KEY: {{ env.DJANGO_SECRET_KEY }}
       DJANGO_ALLOWED_HOSTS: {{ env.DJANGO_ALLOWED_HOSTS }}
       DJANGO_DEBUG_FLAG: {{ env.DJANGO_DEBUG_FLAG }}
@@ -69,6 +71,7 @@ services:
       DJANGO_SUPERUSER_EMAIL: {{ env.DJANGO_SUPERUSER_EMAIL }}
     volumes:
       - static_volume:/billing/static
+    entrypoint: sh -c "python wait_for_pg.py && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8011"
     expose:
       - "8011"
     depends_on:
@@ -113,6 +116,8 @@ services:
       - "443:443"
     depends_on:
       - service
+      - admin_service
+      - auth_service
 
   certbot:
     image: certbot/certbot
