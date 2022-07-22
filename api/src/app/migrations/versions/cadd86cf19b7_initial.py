@@ -26,7 +26,6 @@ def upgrade() -> None:
     op.create_table(
         'cart',
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
-        sa.Column('username', sa.VARCHAR(100), nullable=False),
         sa.Column('created_at', sa.TIMESTAMP, server_default=sa.func.now()),
     )
     op.create_table(
@@ -34,6 +33,7 @@ def upgrade() -> None:
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
         sa.Column('cart_id', postgresql.UUID(as_uuid=True), sa.ForeignKey('cart.id'), nullable=False),
         sa.Column('idempotence_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column('username', sa.VARCHAR(100), nullable=False),
         sa.Column('description', sa.Text, nullable=False),
         sa.Column('payment_system', payment_platforms, nullable=False),
         sa.Column('created_at', sa.TIMESTAMP, server_default=sa.func.now()),

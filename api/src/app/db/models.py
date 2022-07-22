@@ -13,6 +13,7 @@ class Payments(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     cart_id = Column(UUID(as_uuid=True), ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
+    username = Column(VARCHAR(100), nullable=False)
     idempotence_uuid = Column(UUID(as_uuid=True), nullable=False)
     description = Column(Text, nullable=False)
     payment_system = Column(payment_platforms, nullable=False)
@@ -55,7 +56,6 @@ class Cart(Base):
     __tablename__ = 'cart'
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
-    username = Column(VARCHAR(100), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
 
