@@ -77,17 +77,17 @@ class PaymentAdmin(admin.ModelAdmin):
     }
 
     list_display = (
-        'id', 'username', 'provider', 'date', 'paid', 'payment_status',
+        'id', 'username', 'payment_system', 'date', 'paid', 'payment_status',
     )
-    list_filter = ('provider', CreatedListFilter, 'paid', 'payment_status',)
+    list_filter = ('payment_system', CreatedListFilter, 'paid', 'payment_status',)
     search_fields = (
-        'id', 'username', 'provider', 'created_at', 'paid', 'cart',
+        'id', 'username', 'payment_system', 'created_at', 'paid', 'cart',
     )
     ordering = ('created_at',)
     readonly_fields = ('id', 'created_at', 'updated_at')
     fields = (('id', 'created_at', 'updated_at'),
               'username',
-              ('provider', 'payment_status', 'paid'),
+              ('payment_system', 'payment_status', 'paid'),
               'cart',)
 
     def date(self, obj):
