@@ -289,5 +289,5 @@ https://habr.com/ru/company/bitcalm/blog/234861/
 https://fingers.by/blog/how-to-integrate-a-payment-gateway-part-1 часть 1  
 https://fingers.by/blog/how-to-integrate-a-payment-gateway-part-2 часть 2  
 https://stripe.com/docs/api?lang=python Stripe документация  
-https://medium.com/@mishraranjeet122/integrate-stripe-payment-with-a-card-in-python-e90989d39bca Stripe интеграция
-https://habr.com/ru/post/580866/ Как настроить SQLAlchemy, SQLModel и Alembic для асинхронной работы с FastAPI
+https://medium.com/@mishraranjeet122/integrate-stripe-payment-with-a-card-in-python-e90989d39bca  
+Stripe интеграция https://habr.com/ru/post/580866/ Как настроить SQLAlchemy, SQLModel и Alembic для асинхронной работы с FastAPI
