@@ -38,11 +38,16 @@ class DateListFilter(admin.SimpleListFilter):
         return self.field + '__gte'
 
     @property
+    def field_lt(self):
+        return self.field + '__lt'
+
+    @property
     def conditions_map(self):
         conditions_map = {
-            'today': self.today,
-            'this month': self.this_month,
-            'this year': self.this_year
+            'today': (self.today, self.field_gte),
+            'this month': (self.this_month, self.field_gte),
+            'this year': (self.this_year, self.field_gte),
+            'previous years': (self.this_year, self.field_lt),
         }
         return conditions_map
 
@@ -51,13 +56,15 @@ class DateListFilter(admin.SimpleListFilter):
         queryset = model_admin.get_queryset(request)
 
         for name, condition in self.conditions_map.items():
-            if queryset.filter(**{self.field_gte: condition}).exists():
+            value, field_condition = condition
+            if queryset.filter(**{field_condition: value}).exists():
                 yield (name, _(name))
 
     def queryset(self, request, queryset):
         if value := self.value():
             condition = self.conditions_map[value]
-            return queryset.filter(**{self.field_gte: condition})
+            value, field_condition = condition
+            return queryset.filter(**{field_condition: value})
 
 
 class CreatedListFilter(DateListFilter):
@@ -83,7 +90,7 @@ class PaymentAdmin(admin.ModelAdmin):
     )
     list_filter = ('payment_system', CreatedListFilter, 'paid', 'payment_status',)
     search_fields = (
-        'id', 'username', 'payment_system', 'created_at', 'paid', 'cart',
+        'id', 'username', 'payment_system', 'paid', 'cart__name',
     )
     ordering = ('created_at',)
     readonly_fields = ('id', 'created_at', 'updated_at')

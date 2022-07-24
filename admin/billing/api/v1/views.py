@@ -33,9 +33,9 @@ class TransactionView(View):
             record = record.dict()
             cart_data = record.pop('cart')
             payment, _ = Payment.objects.get_or_create(**record)
-
+            payment.cart.clear()
             for product in cart_data:
                 obj, _ = Product.objects.get_or_create(**product)
                 payment.cart.add(obj)
-                
+
         return JsonResponse({'status': 'success'}, status=HTTPStatus.CREATED)
