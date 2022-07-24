@@ -4,12 +4,9 @@ import pytz
 from config import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_json_widget.widgets import JSONEditorWidget
 
-from .models import Payment
-
+from billing.models import Payment, Product
 
 admin.site.unregister(Group)
 
@@ -69,12 +66,17 @@ class CreatedListFilter(DateListFilter):
     field = 'created_at'
 
 
+class ProductInline(admin.TabularInline):
+    model = Product.payments.through
+    verbose_name = 'Product'
+    verbose_name_plural = 'Cart of Products'
+    raw_id_fields = ('payment',)
+    extra = 0
+    min_num = 1
+
+
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
 
     list_display = (
         'id', 'username', 'payment_system', 'date', 'paid', 'payment_status',
@@ -87,8 +89,20 @@ class PaymentAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created_at', 'updated_at')
     fields = (('id', 'created_at', 'updated_at'),
               'username',
-              ('payment_system', 'payment_status', 'paid'),
-              'cart',)
+              ('payment_system', 'payment_status', 'paid'),)
+    inlines = [ProductInline]
 
     def date(self, obj):
         return obj.created_at.date()
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'name', 'value', 'currency',)
+    ordering = ('name',)
+    readonly_fields = ('id', 'created_at', 'updated_at',)
+    list_filter = ('name', 'currency',)
+    search_fields = ('name', 'currency', 'value',)
+    fields = (('id', 'created_at', 'updated_at'),
+              ('name', 'value', 'currency'))
