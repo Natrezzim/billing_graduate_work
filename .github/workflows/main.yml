@@ -60,6 +60,15 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f auth_api/redis/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./auth_api/redis
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
+      - name: Build, tag, and push image to Yandex Cloud Container Registry
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-admin
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f admin/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./admin
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
       - name: Deploy COI VM
         id: deploy-coi
         uses: yc-actions/yc-coi-deploy@v1
@@ -103,6 +112,16 @@ jobs:
           JAEGER_PORT: ${{ secrets.JAEGER_PORT }}
           XCAPTCHA_SITE_KEY: ${{ secrets.XCAPTCHA_SITE_KEY }}
           XCAPTCHA_SECRET_KEY: ${{ secrets.XCAPTCHA_SECRET_KEY }}
+          # Admin service
+          DB_HOST_ADMIN: ${{ secrets.DB_HOST_ADMIN }}
+          DB_PORT_ADMIN: ${{ secrets.DB_PORT_ADMIN }}
+          DB_NAME_ADMIN: ${{ secrets.DB_NAME_ADMIN }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+          DJANGO_DEBUG_FLAG: ${{ secrets.DJANGO_DEBUG_FLAG }}
+          DJANGO_SUPERUSER_USERNAME: ${{ env.DJANGO_SUPERUSER_USERNAME }}
+          DJANGO_SUPERUSER_PASSWORD: ${{ env.DJANGO_SUPERUSER_PASSWORD }}
+          DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: b1gnn1cdso7c6e7ma8rp

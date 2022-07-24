@@ -1,26 +1,10 @@
 # Проектная работа: диплом
-
+***
 Платежная система
 -
-
-1 прием платежей  
-2 лог транзакций  
-3 оплата  
-4 повторяющиеся платежи (подписка)   
-
-Основная единицей системы транзакция.  
-
-модель:   
-
-user   
-reason   
-amount   
-datetime   
-balance???   
-
+***
 Прием платежей
 -
-
 
 • Регистрируемся в платежной системе; 
 
@@ -63,55 +47,241 @@ http://127.0.0.1/api/v1/payment/{payment_id}
 по которому должен проследовать пользователь и произвести оплату
 
 
-
+***
 Списание средств 
 -
-
-
-Перед операцией необходимо проверять,  
-каким будет баланс счета после проведения операции.   
-Это необходимо делать для того, чтобы не обслуживать пользователя “в кредит”,  
-что особенно важно, когда транзакции выполняются на большие суммы.   
-
+***
 Повторяющиеся списания
 -
- 
-У нас есть потребность каждый час (назовет это “биллинг-период”)   
-снимать с пользователя определенную сумму в соответствии с его тарифным планом.   
-Для реализации этого механизма мы используем celery – написан task, который выполняется каждый час.   
-Логика в этом моменте получилась сложная, так как необходимо учитывать много факторов: 
-
-• между выполнениями задачи в celery никогда не пройдет ровно час (биллинг-период); 
-
-• пользователь пополняет свой баланс (он становится >0) и   
-получает доступ к услугам между биллинг-периодами, снимать за период было бы нечестно;   
-
-• пользователь может поменять тариф в любое время; 
-
-• celery может по каким-либо причинам перестать выполнять задачи  
-
-
-в модель User добавить поле 
-last_hourly_billing, где указываем время последней повторяющиеся операции.  
-Логика работы: 
-
-• Каждый биллинг-период мы смотрим время last_hourly_billing и   
-списываем сумму согласно тарифному плану, затем обновляем поле last_hourly_billing; 
-
-• При смене тарифного плана мы списываем сумму по прошлому тарифу и обновляем поле last_hourly_billing; 
-
-• При активации услуги мы обновляем поле last_hourly_billing.
-
+***
 Безопасность
 -
-Шифрование SSL
+Настроено SSL шифрование  
+Сертификат Let's Encrypt получен с помощью Certbot
+```nginx configuration
+server {
+    listen 443 default_server ssl http2;
+    listen [::]:443 ssl http2;
 
-JWT token - payload user_id
+    root /home/app;
+
+    server_name moviesbilling.ddns.net www.moviesbilling.ddns.net.com;
+
+    ssl_certificate /etc/nginx/ssl/live/moviesbilling.ddns.net/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/moviesbilling.ddns.net/privkey.pem;
+
+  	ssl_session_cache shared:SSL:10m;
+  	ssl_session_timeout 10m;
+
+  	ssl_protocols TLSv1.2;
+	ssl_prefer_server_ciphers on;
+	ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
+
+    ssl_dhparam /etc/nginx/ssl/ffdhe4096.pem;
+    ssl_ecdh_curve secp521r1:secp384r1;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+	add_header X-Frame-Options DENY always;
+
+	add_header X-Content-Type-Options nosniff always;
+
+	add_header X-Xss-Protection "1; mode=block" always;
+
+  	ssl_stapling on;
+  	ssl_stapling_verify on;
+  	ssl_trusted_certificate /etc/nginx/ssl/live/moviesbilling.ddns.net/fullchain.pem;
+  	resolver 1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001] valid=300s;
+  	resolver_timeout 5s;
+}
+```
+***
 
 CI/CD
 -
-Сервис развернут в яндекс облаке
-Доступен по статическому адресу 51.250.91.209 moviesbilling.ddns.net
+Сервис развернут в яндекс облаке  
+Доступен по статическому адресу 51.250.91.209 moviesbilling.ddns.net  
+Настроен автоматический deploy с помощью github actions при мерже в ветку main  
+Все образы сохраняются в Yandex Container Registry. Образы храняться в течении 24 часов, затем автоматически удаляются.
+Все переменные среды берутся из github secrets  
+Виртуальная машина создается командой  
+```text
+yc compute instance create-with-container --name ubuntu20-billing-ci --zone ru-central1-a --network-interface subnet-name=default-ru-central1-a,nat-ip-version=ipv4,nat-address=51.250.91.209 --service-account-name user-for-vm --docker-compose-file "путь к docker-compose.yaml файлу расположенному на локальной машине" --ssh-key "путь к публичному ключу .pub расположенному на локальной машине"
+```
+Пользователь для доступа к ВМ - yc-user  
+
+Используются два файла docker-compose.yml
+* docker-compose.dev.yaml - для удобной разработки локально
+* docker-compose.prod.yaml - для разворачивания в облаке
+
+### Настройки nginx
+Конфиг nginx.conf
+```nginx configuration
+worker_processes  1;
+
+events {
+  worker_connections  1024;
+}
+
+http {
+  include       mime.types;
+  include       conf.d/*.conf;
+  log_format  json '{ "time": "$time_local", '
+                   '"remote_ip": "$remote_addr", '
+                   '"remote_user": "$remote_user", '
+                   '"request": "$request", '
+                   '"response": "$status", '
+                   '"bytes": "$body_bytes_sent", '
+                   '"referrer": "$http_referer", '
+                   '"agent": "$http_user_agent", '
+                   '"request_id": "$request_id"}';
+
+  access_log /var/log/nginx/access-log.json json;
+
+  sendfile        on;
+  tcp_nodelay     on;
+  tcp_nopush      on;
+  client_max_body_size 200m;
+  server_tokens   off;
+
+  gzip on;
+  gzip_comp_level 3;
+  gzip_min_length 1000;
+  gzip_types
+        text/plain
+        text/css
+        application/json
+        application/x-javascript
+        text/xml
+        text/javascript;
+
+  proxy_redirect     off;
+  proxy_set_header   Host             $host;
+  proxy_set_header   X-Real-IP        $remote_addr;
+  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+  proxy_set_header   X-Request-ID     $request_id;
+
+
+} 
+```
+Конфиг site.conf
+```nginx configuration
+server {
+    listen       80 default_server;
+    listen       [::]:80 default_server;
+    server_name moviesbilling.ddns.net www.moviesbilling.ddns.net.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+
+}
+
+server {
+    listen 443 default_server ssl http2;
+    listen [::]:443 ssl http2;
+
+    root /home/app;
+
+    server_name moviesbilling.ddns.net www.moviesbilling.ddns.net.com;
+
+    ssl_certificate /etc/nginx/ssl/live/moviesbilling.ddns.net/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/live/moviesbilling.ddns.net/privkey.pem;
+
+  	ssl_session_cache shared:SSL:10m;
+  	ssl_session_timeout 10m;
+
+  	ssl_protocols TLSv1.2;
+	ssl_prefer_server_ciphers on;
+	ssl_ciphers "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384";
+
+    ssl_dhparam /etc/nginx/ssl/ffdhe4096.pem;
+    ssl_ecdh_curve secp521r1:secp384r1;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+	add_header X-Frame-Options DENY always;
+
+	add_header X-Content-Type-Options nosniff always;
+
+	add_header X-Xss-Protection "1; mode=block" always;
+
+  	ssl_stapling on;
+  	ssl_stapling_verify on;
+  	ssl_trusted_certificate /etc/nginx/ssl/live/moviesbilling.ddns.net/fullchain.pem;
+  	resolver 1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001] valid=300s;
+  	resolver_timeout 5s;
+
+    location / {
+        proxy_pass http://billing_api:8010;
+    }
+
+    location /auth/ {
+        proxy_pass http://auth_api:8001/;
+    }
+
+    location /swagger.json {
+        proxy_pass http://auth_api:8001/swagger.json;
+    }
+
+    location /swaggerui/ {
+        proxy_pass http://auth_api:8001/swaggerui/;
+    }
+
+    location /admin_panel {
+        proxy_pass_header Server;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header USE_X_FORWARDED_HOST True;
+        proxy_set_header SCRIPT_NAME /admin_panel;
+        proxy_connect_timeout 6000;
+        proxy_read_timeout 6000;
+        proxy_pass http://admin_django:8011;
+    }
+
+    location /static/ {
+        autoindex on;
+        alias /home/app/static/;
+    }
+}
+
+```
+
+***
+
+Адреса сервисов
+-
+
+### Сервис оплаты(FastAPI)
+Основной адрес https://moviesbilling.ddns.net  
+Документация https://moviesbilling.ddns.net/app/openapi
+
+### Сервис аутентификации(Flask)
+Основной адрес https://moviesbilling.ddns.net/auth/  
+Документация https://moviesbilling.ddns.net/auth/docs/  - swagger не работает(кидать запросы через Postman)
+
+### Админ-панель(Django)
+Основной адрес https://moviesbilling.ddns.net/admin_panel/  
+Панель администратора https://moviesbilling.ddns.net/admin_panel/admin/  
+
+***
+
+База данных
+-
+На проекте используется БД PostgreSQL 12.0.
+Созданы 3 БД:  
+*  billing_db - использует сервис оплаты
+*  auth_db - использует сервис аутентификации
+*  admin_db - использует сервис Админ-панель
+
+***
 
 Статьи
 -
