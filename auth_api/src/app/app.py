@@ -1,4 +1,6 @@
+import json
 import os
+import logging
 
 from app.api.v1.routes.routes import initialize_routes
 from app.api.v1.service.auth_service.auth_api import auth, auth_namespace
@@ -20,6 +22,11 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 load_dotenv(f'{os.getcwd()}/.env')
 
 app = Flask(__name__)
+
+log_format = {"asctime": "%(asctime)s","levelname": "%(levelname)s","name": "%(name)s","threadName": "%(threadName)s","message": "%(message)s"}
+logging.basicConfig(filename='/usr/src/app/logs/auth_logs.log',
+                    level=logging.DEBUG,
+                    format=json.dumps(log_format))
 
 jwt = JWTManager(app)
 

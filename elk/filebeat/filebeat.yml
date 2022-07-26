@@ -1,0 +1,42 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/nginx/*
+  json:
+    keys_under_root: true
+    add_error_key: true
+  tags: ["nginx"]
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/django/*.log
+  json:
+    keys_under_root: true
+    add_error_key: true
+  tags: ["django"]
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/auth/*.log
+  json:
+    symlinks: true
+    json.message_key: asctime
+    json.keys_under_root: true
+    json.add_error_key: true
+  tags: ["auth"]
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/billing/*.log
+  json:
+    json.keys_under_root: true
+    json.add_error_key: true
+  tags: ["billing"]
+
+output.logstash:
+  enabled: true
+  hosts: ["logstash:5045"]

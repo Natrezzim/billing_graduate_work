@@ -1,6 +1,8 @@
+import logging
 from http import HTTPStatus
 
 import orjson
+import structlog
 from billing.models import Payment
 from django.db import IntegrityError
 from django.http import JsonResponse
@@ -8,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
+logger = structlog.get_logger(__name__)
 
 @method_decorator(csrf_exempt, 'dispatch')
 class TransactionView(View):
