@@ -119,7 +119,7 @@ services:
     environment:
       - SERVER_BASEPATH=/kibana
     ports:
-      - "5601:5601"
+      - "5601"
     depends_on:
       - elasticsearch
 

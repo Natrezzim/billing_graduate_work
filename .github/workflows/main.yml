@@ -15,7 +15,7 @@ jobs:
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image billing-api
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-api
@@ -24,7 +24,7 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f api/src/app/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./api/src/app
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image billing-nginx
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-nginx
@@ -33,7 +33,7 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f nginx/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./nginx
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image billing-auth
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-auth
@@ -42,7 +42,7 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f auth_api/src/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./auth_api/src/
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image billing-postgres
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-postgres
@@ -51,7 +51,7 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f postgres/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./postgres
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG   
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image billing-redis
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-redis
@@ -60,13 +60,31 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f auth_api/redis/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./auth_api/redis
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
-      - name: Build, tag, and push image to Yandex Cloud Container Registry
+      - name: Build, tag, and push image billing-admin
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9
           CR_REPOSITORY: billing-admin
           IMAGE_TAG: ${{ github.sha }}
         run: |
           DOCKER_BUILDKIT=1 docker build -f admin/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./admin
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag, and push image billing-logstash
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-logstash
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f elk/logstash/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./elk/logstash
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag, and push image billing-filebeat
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-filebeat
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f elk/filebeat/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./elk/filebeat
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
       - name: Deploy COI VM
