@@ -18,6 +18,7 @@ class Payments(Base):
     idempotence_uuid = Column(UUID(as_uuid=True), nullable=False)
     description = Column(Text, nullable=False)
     payment_system = Column(payment_platforms, nullable=False)
+    currency = Column()
     created_at = Column(TIMESTAMP, default=datetime.now())
 
 
@@ -37,20 +38,9 @@ class Products(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
     name = Column(VARCHAR(100), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    updated_at = Column(TIMESTAMP, nullable=False, onupdate=func.now())
-
-
-class Prices(Base):
-    __tablename__ = 'prices'
-    __table_args__ = (UniqueConstraint('product_id', 'currency', name='product_currency_uix'),)
-
-    id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
-    product_id = Column(UUID(as_uuid=True), ForeignKey('products.id'), nullable=False)
     value = Column(Float(asdecimal=True), nullable=False)
     currency = Column(currencies, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    updated_at = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
 
 
 # class ProductsToCart(Base):

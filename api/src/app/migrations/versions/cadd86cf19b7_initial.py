@@ -51,17 +51,9 @@ def upgrade() -> None:
         'products',
         sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
         sa.Column('name', sa.VARCHAR(100), nullable=False),
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
-        sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now(), onupdate=sa.func.now()),
-    )
-    op.create_table(
-        'prices',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
-        sa.Column('product_id', postgresql.UUID(as_uuid=True), sa.ForeignKey('products.id'), nullable=False),
         sa.Column('value', sa.Float(asdecimal=True), nullable=False),
         sa.Column('currency', currencies, nullable=False),
         sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
-        sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now(), onupdate=sa.func.now()),
         sa.UniqueConstraint('product_id', 'currency', name='product_currency_uix')
     )
     op.create_table(

@@ -20,10 +20,16 @@ class AdminPayment(BaseModel):
     updated_at: str
 
 
-class AdminPayments(BaseModel):
+class Payments(BaseModel):
     total: int
-    items: List[AdminPayment]
+    items: List[BaseModel]
 
     def __init__(self, items):
         total = len(items)
         super().__init__(total=total, items=items)
+
+
+class AuthPayment(BaseModel):
+    username: str
+    product_name: str
+    created_at: str
