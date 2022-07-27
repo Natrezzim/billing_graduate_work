@@ -1,5 +1,6 @@
 import socket
 
+import asyncpg
 import backoff
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -30,7 +31,7 @@ async def init_db():
 
 
 @backoff.on_exception(wait_gen=backoff.expo,
-                      exception=(ConnectionRefusedError, socket.gaierror))
+                      exception=(ConnectionRefusedError, socket.gaierror, asyncpg.InvalidCatalogNameError))
 async def test_connection():
     conn = await engine.connect()
     await conn.execute(select(1))

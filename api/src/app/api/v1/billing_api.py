@@ -44,10 +44,10 @@ async def transaction_test(payment_data: PaymentsCreate,
         },
         "confirmation": {
             "type": "redirect",
-            "return_url": "http://127.0.0.1:8000/return-url"
+            "return_url": "http://moviesbilling.ddns.net/return-url"
         },
         "metadata": {
-            "idempotence_key": idempotence_key
+            "user_id": payment_data.user_id
         },
         "description": payment_data.description}, idempotence_key)
 

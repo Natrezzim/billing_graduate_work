@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<img src="{{ qrcode(data=url, box_size=3) }}"><br />
+<br>
+<p>Scan QR-code with TOTP-app and input code</p>
+<form method="post" action="?user_id={{ user_id }}">
+    <input required name="code">
+    <button type="submit">Synchronising</button><br />
+     <br>
+    {{ xcaptcha }}
+</form>
+</body>
+</html>

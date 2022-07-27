@@ -1,7 +1,7 @@
 {
   "logger": {
-    "path": "/var/logs",
-    "filename": "access.log",
+    "path": "/usr/src/app/logs/billing_log.log",
+    "filename": "billing_log.log",
     "level": "info",
     "rotation": "20 days",
     "retention": "1 months",

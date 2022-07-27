@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
 
@@ -8,6 +8,8 @@ services:
     build:
       context: api/src/app
       dockerfile: ./Dockerfile
+    volumes:
+      - billing_log:/usr/src/app/logs
     ports:
       - "8010"
     env_file:
@@ -15,9 +17,61 @@ services:
     depends_on:
       - db
 
+  auth_service:
+    container_name: auth_api
+    build:
+      context: auth_api/src
+      dockerfile: ./Dockerfile
+    volumes:
+      - auth_log:/usr/src/app/logs
+    environment:
+      FLASK_APP: src/app/app.py
+    entrypoint: >
+      sh -c "python src/app/utils/wait_for_pg.py && python src/app/utils/wait_for_redis.py && python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
+    expose:
+      - "8001"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  admin_service:
+    container_name: admin_django
+    build:
+      context: admin
+      dockerfile: ./Dockerfile
+    volumes:
+      - static_volume:/billing/static
+      - django_logs:/billing/logs
+    expose:
+      - "8011"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  jaeger:
+    container_name: jaeger_auth
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6833:6833/udp"
+      - "16686:16686"
+
+  redis:
+    container_name: redis_auth
+    build:
+      context: auth_api/redis
+      dockerfile: ./Dockerfile
+    depends_on:
+      - auth_service
+    ports:
+      - "6380:6380"
+
   db:
     container_name: billing_db
-    image: postgres:12.0-alpine
+    build:
+      context: postgres
+      dockerfile: ./Dockerfile
     ports:
       - "5432:5432"
     volumes:
@@ -30,10 +84,64 @@ services:
     build:
       context: ./nginx
       dockerfile: ./Dockerfile.dev
+    volumes:
+      - static_volume:/home/app/static
+      - nginx_logs:/var/log/nginx/
     ports:
       - "80:80"
     depends_on:
       - service
 
+  elasticsearch:
+    container_name: elasticsearch
+    image: elastic/elasticsearch:7.10.1
+    environment:
+      discovery.type: single-node
+    ports:
+      - "9200"
+    volumes:
+      - elastic:/tmp/elasticsearch/data
+
+  logstash:
+    container_name: logstash
+    build:
+      context: ./elk/logstash
+      dockerfile: ./Dockerfile
+    depends_on:
+      - elasticsearch
+    ports:
+      - "12201/udp"
+    command: logstash -f /config/logstash.conf
+
+  kibana:
+    container_name: kibana
+    image: elastic/kibana:7.10.1
+    environment:
+      - SERVER_BASEPATH=/kibana
+    ports:
+      - "5601"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    container_name: filebeat
+    build:
+      context: ./elk/filebeat
+      dockerfile: ./Dockerfile
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - nginx_logs:/var/log/nginx:ro
+      - django_logs:/var/log/django:ro
+      - auth_log:/var/log/auth:ro
+      - billing_log:/var/log/billing:ro
+    depends_on:
+      - nginx
+
 volumes:
   postgres_data:
+  static_volume:
+  nginx_logs:
+  elastic:
+  django_logs:
+  auth_log:
+  billing_log:

@@ -6,9 +6,9 @@ from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
 db_driver: str = os.getenv('DRIVER', 'postgresql')
-db_host: str = os.getenv('DB_HOST', 'localhost')
-db_port: str = os.getenv('DB_PORT', '5432')
-db_name: str = os.getenv('POSTGRES_DB', 'billing_db')
+db_host: str = os.getenv('DB_HOST_BILLING', 'localhost')
+db_port: str = os.getenv('DB_PORT_BILLING', '5432')
+db_name: str = os.getenv('DB_NAME_BILLING', 'billing_db')
 db_user: str = os.getenv('POSTGRES_USER', 'postgres')
 db_password: str = os.getenv('POSTGRES_PASSWORD', '11111111')
 

@@ -17,7 +17,8 @@ class PaymentsService:
             value=payment_data.value,
             description=yookassa_response.description,
             created_at=yookassa_response.created_at,
-            payment_id=yookassa_response.id
+            payment_id=yookassa_response.id,
+            user_id=payment_data.user_id
         )
         self.storage.add(payment_data)
         await self.storage.commit()
