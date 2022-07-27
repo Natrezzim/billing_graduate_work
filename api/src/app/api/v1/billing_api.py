@@ -1,11 +1,12 @@
 import uuid
 
-from app.models.billing_models import PaymentsCreate
-from app.service.auth_service import Auth
-from app.service.billing_service import PaymentsService, get_payments_service
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 from yookassa import Payment
+
+from app.service.auth_service import Auth
+from app.models.billing_models import PaymentsCreate
+from app.service.billing_service import PaymentsService, get_payments_service
 
 router = APIRouter()
 auth_handler = Auth()

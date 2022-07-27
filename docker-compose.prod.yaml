@@ -58,6 +58,27 @@ services:
     depends_on:
       - db
 
+  cronjob:
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-cronjob:{{ env.IMAGE_TAG }}
+    environment:
+      DB_HOST_BILLING: {{ env.DB_HOST_BILLING }}
+      DB_PORT_BILLING: {{ env.DB_PORT_BILLING }}
+      DB_NAME_BILLING: {{ env.DB_NAME_BILLING }}
+      POSTGRES_USER: {{ env.POSTGRES_USER }}
+      POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
+      AUTH_URL: {{ env.AUTH_URL }}
+      AUTH_SYNC_PATH: {{ env.AUTH_SYNC_PATH }}
+      AUTH_TOKEN: {{ env.AUTH_TOKEN }}
+      ADMIN_URL: {{ env.ADMIN_URL }}
+      ADMIN_SYNC_PATH: {{ env.ADMIN_SYNC_PATH }}
+      ADMIN_LOGIN: {{ env.ADMIN_LOGIN }}
+      ADMIN_PASSWORD: {{ env.ADMIN_PASSWORD }}
+    entrypoint: sh -c "python src/app/utils/wait_for_pg.py && python src/app/scheduler.py"
+    depends_on:
+      - db
+      - auth_service
+      - admin_service
+
   admin_service:
     container_name: admin_django
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-admin:{{ env.IMAGE_TAG }}
