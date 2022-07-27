@@ -15,9 +15,9 @@ from pydantic import ValidationError
 @method_decorator(csrf_exempt, 'dispatch')
 class TransactionView(View):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.logger = structlog.get_logger(self.__class__.__name__)
-        super().__init__(self, *args, **kwargs)
 
     version = 'v1.230722'
 
