@@ -16,6 +16,31 @@
 
 • Реализовываем функцию зачисления средств на баланс после оплаты.
 
+До создания платежа необходимо зарегистрироваться. Отправляем POST-запрос на адрес:
+```
+https://moviesbilling.ddns.net/auth/api/v1/registration
+```
+Тело запроса:
+```
+{
+    "username": "user_name",
+    "password": "newpassword1",
+    "email": "user_name@test.com"
+}
+```
+После регистрации, отправляем POST-запрос для получения **access_token** на адрес:
+```
+https://moviesbilling.ddns.net/auth/api/v1/login
+```
+Тело запроса:
+```
+{
+    "username": "user_name",
+    "password": "newpassword1"
+}
+```
+C **access_token** можем создавать платежы, получать список платежей и детальную информацию по конкретному платежу.
+
 Создаем платеж:
 ```
 {
@@ -27,19 +52,19 @@
 
 Отправляем POST-запрос на адрес:
 ```
-http://127.0.0.1/api/v1/payment
+https://moviesbilling.ddns.net/api/v1/payment
 ```
 
 Получить список платежей. Отправляем GET-запрос на адрес:
 
 ```
-http://127.0.0.1/api/v1/payment
+https://moviesbilling.ddns.net/api/v1/payment
 ```
 
 Получить информацию по конкретному платежу. Отправляем GET-запрос на адрес:
 
 ```
-http://127.0.0.1/api/v1/payment/{payment_id}
+https://moviesbilling.ddns.net/api/v1/payment/{payment_id}
 ```
 
 
