@@ -18,7 +18,6 @@ class Payments(Base):
     idempotence_uuid = Column(UUID(as_uuid=True), nullable=False)
     description = Column(Text, nullable=False)
     payment_system = Column(payment_platforms, nullable=False)
-    currency = Column()
     created_at = Column(TIMESTAMP, default=datetime.now())
 
 
@@ -69,5 +68,4 @@ class Cart(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    products = relationship(Prices, secondary=ProductsToCart, primaryjoin=ProductsToCart.c.cart_id,
-                            secondaryjoin=ProductsToCart.c.product_id)
+    products = relationship(Products, secondary=ProductsToCart)

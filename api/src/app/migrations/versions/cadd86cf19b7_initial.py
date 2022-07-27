@@ -54,7 +54,6 @@ def upgrade() -> None:
         sa.Column('value', sa.Float(asdecimal=True), nullable=False),
         sa.Column('currency', currencies, nullable=False),
         sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
-        sa.UniqueConstraint('product_id', 'currency', name='product_currency_uix')
     )
     op.create_table(
         'products_to_cart',
