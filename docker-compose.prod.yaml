@@ -5,7 +5,7 @@ services:
   service:
     container_name: billing_api
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-api:{{ env.IMAGE_TAG }}
-    entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log
+    entrypoint: sh -c "python src/app/utils/wait_for_pg.py && uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log && python src/app/scheduler.py"
     volumes:
       - billing_log:/usr/src/app/logs
     ports:
@@ -19,6 +19,15 @@ services:
       YOOKASSA_SECRET_KEY: {{ env.YOOKASSA_SECRET_KEY }}
       YOOKASSA_ACCESS_TOKEN: {{ env.YOOKASSA_ACCESS_TOKEN }}
       DATABASE_URL: {{ env.DATABASE_URL }}
+      POSTGRES_USER: {{ env.POSTGRES_USER }}
+      POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
+      AUTH_URL: {{ env.AUTH_URL }}
+      AUTH_SYNC_PATH: {{ env.AUTH_SYNC_PATH }}
+      AUTH_TOKEN: {{ env.AUTH_TOKEN }}
+      ADMIN_URL: {{ env.ADMIN_URL }}
+      ADMIN_SYNC_PATH: {{ env.ADMIN_SYNC_PATH }}
+      ADMIN_LOGIN: {{ env.ADMIN_LOGIN }}
+      ADMIN_PASSWORD: {{ env.ADMIN_PASSWORD }}
     depends_on:
       - db
 
@@ -57,27 +66,6 @@ services:
       - "8001"
     depends_on:
       - db
-
-  cronjob:
-    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-cronjob:{{ env.IMAGE_TAG }}
-    environment:
-      DB_HOST_BILLING: {{ env.DB_HOST_BILLING }}
-      DB_PORT_BILLING: {{ env.DB_PORT_BILLING }}
-      DB_NAME_BILLING: {{ env.DB_NAME_BILLING }}
-      POSTGRES_USER: {{ env.POSTGRES_USER }}
-      POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
-      AUTH_URL: {{ env.AUTH_URL }}
-      AUTH_SYNC_PATH: {{ env.AUTH_SYNC_PATH }}
-      AUTH_TOKEN: {{ env.AUTH_TOKEN }}
-      ADMIN_URL: {{ env.ADMIN_URL }}
-      ADMIN_SYNC_PATH: {{ env.ADMIN_SYNC_PATH }}
-      ADMIN_LOGIN: {{ env.ADMIN_LOGIN }}
-      ADMIN_PASSWORD: {{ env.ADMIN_PASSWORD }}
-    entrypoint: sh -c "python src/app/utils/wait_for_pg.py && python src/app/scheduler.py"
-    depends_on:
-      - db
-      - auth_service
-      - admin_service
 
   admin_service:
     container_name: admin_django

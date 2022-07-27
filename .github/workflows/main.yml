@@ -108,6 +108,13 @@ jobs:
           YOOKASSA_SECRET_KEY: ${{ secrets.YOOKASSA_SECRET_KEY }}
           YOOKASSA_ACCESS_TOKEN: ${{ secrets.YOOKASSA_ACCESS_TOKEN }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          AUTH_URL: ${{ secrets.AUTH_URL }}
+          AUTH_SYNC_PATH: ${{ secrets.AUTH_SYNC_PATH }}
+          AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+          ADMIN_URL: ${{ secrets.ADMIN_URL }}
+          ADMIN_SYNC_PATH: ${{ secrets.ADMIN_SYNC_PATH }}
+          ADMIN_LOGIN: ${{ secrets.ADMIN_LOGIN }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           # Auth service
           DB_HOST_AUTH: ${{ secrets.DB_HOST_AUTH }}
           DB_PORT_AUTH: ${{ secrets.DB_PORT_AUTH }}
