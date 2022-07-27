@@ -12,6 +12,7 @@ services:
       - "8010"
     environment:
       PROJECT_NAME: {{ env.PROJECT_NAME }}
+      AUTH_SECRET: {{ env.AUTH_SECRET }}
       DB_HOST_BILLING: {{ env.DB_HOST_BILLING }}
       DB_PORT_BILLING: {{ env.DB_PORT_BILLING }}
       DB_NAME_BILLING: {{ env.DB_NAME_BILLING }}
