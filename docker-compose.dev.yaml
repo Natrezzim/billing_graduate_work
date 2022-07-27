@@ -8,6 +8,8 @@ services:
     build:
       context: api/src/app
       dockerfile: ./Dockerfile
+    volumes:
+      - billing_log:/usr/src/app/logs
     ports:
       - "8010"
     env_file:
@@ -20,6 +22,8 @@ services:
     build:
       context: auth_api/src
       dockerfile: ./Dockerfile
+    volumes:
+      - auth_log:/usr/src/app/logs
     environment:
       FLASK_APP: src/app/app.py
     entrypoint: >
@@ -38,6 +42,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - static_volume:/billing/static
+      - django_logs:/billing/logs
     expose:
       - "8011"
     env_file:
@@ -81,11 +86,62 @@ services:
       dockerfile: ./Dockerfile.dev
     volumes:
       - static_volume:/home/app/static
+      - nginx_logs:/var/log/nginx/
     ports:
       - "80:80"
     depends_on:
       - service
 
+  elasticsearch:
+    container_name: elasticsearch
+    image: elastic/elasticsearch:7.10.1
+    environment:
+      discovery.type: single-node
+    ports:
+      - "9200"
+    volumes:
+      - elastic:/tmp/elasticsearch/data
+
+  logstash:
+    container_name: logstash
+    build:
+      context: ./elk/logstash
+      dockerfile: ./Dockerfile
+    depends_on:
+      - elasticsearch
+    ports:
+      - "12201/udp"
+    command: logstash -f /config/logstash.conf
+
+  kibana:
+    container_name: kibana
+    image: elastic/kibana:7.10.1
+    environment:
+      - SERVER_BASEPATH=/kibana
+    ports:
+      - "5601"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    container_name: filebeat
+    build:
+      context: ./elk/filebeat
+      dockerfile: ./Dockerfile
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - nginx_logs:/var/log/nginx:ro
+      - django_logs:/var/log/django:ro
+      - auth_log:/var/log/auth:ro
+      - billing_log:/var/log/billing:ro
+    depends_on:
+      - nginx
+
 volumes:
   postgres_data:
   static_volume:
+  nginx_logs:
+  elastic:
+  django_logs:
+  auth_log:
+  billing_log:

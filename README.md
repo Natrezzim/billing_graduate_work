@@ -271,6 +271,9 @@ server {
 Основной адрес https://moviesbilling.ddns.net/admin_panel/  
 Панель администратора https://moviesbilling.ddns.net/admin_panel/admin/  
 
+### ELK
+Основной адрес https://moviesbilling.ddns.net/kibana/
+
 ***
 
 База данных

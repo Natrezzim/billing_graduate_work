@@ -1,6 +1,8 @@
+import logging
 from http import HTTPStatus
 
 import orjson
+import structlog
 from billing.models import Payment, Product
 from billing.validators import ValidListPayments
 from django.http import JsonResponse
@@ -12,6 +14,10 @@ from pydantic import ValidationError
 
 @method_decorator(csrf_exempt, 'dispatch')
 class TransactionView(View):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.logger = structlog.get_logger(self.__class__.__name__)
 
     version = 'v1.230722'
 

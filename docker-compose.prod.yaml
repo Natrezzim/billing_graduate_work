@@ -6,6 +6,8 @@ services:
     container_name: billing_api
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-api:{{ env.IMAGE_TAG }}
     entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log
+    volumes:
+      - billing_log:/usr/src/app/logs
     ports:
       - "8010"
     environment:
@@ -49,6 +51,8 @@ services:
       XCAPTCHA_SITE_KEY: {{ env.XCAPTCHA_SITE_KEY }}
       XCAPTCHA_SECRET_KEY: {{ env.XCAPTCHA_SECRET_KEY }}
     entrypoint: sh -c "python src/app/utils/wait_for_pg.py && python src/app/utils/wait_for_redis.py && python -m flask db upgrade  && sleep 5 && python -m flask run --host 0.0.0.0 --port 8001 --debugger"
+    volumes:
+      - auth_log:/usr/src/app/logs
     expose:
       - "8001"
     depends_on:
@@ -69,9 +73,10 @@ services:
       DJANGO_SUPERUSER_USERNAME: {{ env.DJANGO_SUPERUSER_USERNAME }}
       DJANGO_SUPERUSER_PASSWORD: {{ env.DJANGO_SUPERUSER_PASSWORD }}
       DJANGO_SUPERUSER_EMAIL: {{ env.DJANGO_SUPERUSER_EMAIL }}
+    entrypoint: sh -c "python wait_for_pg.py && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8011"
     volumes:
       - static_volume:/billing/static
-    entrypoint: sh -c "python wait_for_pg.py && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8011"
+      - django_logs:/billing/logs
     expose:
       - "8011"
     depends_on:
@@ -111,6 +116,7 @@ services:
       - certbot-conf:/etc/nginx/ssl/:ro
       - certbot-www:/var/www/certbot/:ro
       - static_volume:/home/app/static
+      - nginx_logs:/var/log/nginx/
     ports:
       - "80:80"
       - "443:443"
@@ -128,8 +134,54 @@ services:
     depends_on:
       - nginx
 
+  elasticsearch:
+    container_name: elasticsearch
+    image: elastic/elasticsearch:7.10.1
+    environment:
+      discovery.type: single-node
+    ports:
+      - "9200"
+    volumes:
+      - elastic:/tmp/elasticsearch/data
+
+  logstash:
+    container_name: logstash
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-logstash:{{ env.IMAGE_TAG }}
+    depends_on:
+      - elasticsearch
+    ports:
+      - "12201/udp"
+    command: logstash -f /config/logstash.conf
+
+  kibana:
+    container_name: kibana
+    image: elastic/kibana:7.10.1
+    environment:
+      SERVER_BASEPATH: /kibana
+    ports:
+      - "5601"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    container_name: filebeat
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-filebeat:{{ env.IMAGE_TAG }}
+    command: filebeat -e -strict.perms=false
+    volumes:
+      - nginx_logs:/var/log/nginx:ro
+      - django_logs:/var/log/django:ro
+      - auth_log:/var/log/auth:ro
+      - billing_log:/var/log/billing:ro
+    depends_on:
+      - nginx
+
 volumes:
   postgres_data:
   certbot-conf:
   certbot-www:
   static_volume:
+  nginx_logs:
+  elastic:
+  django_logs:
+  auth_log:
+  billing_log:
