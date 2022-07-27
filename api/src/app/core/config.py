@@ -5,6 +5,8 @@ from pydantic import BaseSettings, Field
 class Settings(BaseSettings):
     project_name: str = Field('Billing', env='PROJECT_NAME')
 
+    auth_secret: str = Field('verystrongsecretkey', env='AUTH_SECRET')
+
     db_driver: str = Field('postgresql', env='DRIVER')
     db_host: str = Field('postgres', env='DB_HOST_BILLING')
     db_port: str = Field('5432', env='DB_PORT_BILLING')

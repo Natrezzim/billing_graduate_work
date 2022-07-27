@@ -101,6 +101,7 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           # Billing srvice
           PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           DB_HOST_BILLING: ${{ secrets.DB_HOST_BILLING }}
           DB_PORT_BILLING: ${{ secrets.DB_PORT_BILLING }}
           DB_NAME_BILLING: ${{ secrets.DB_NAME_BILLING }}
