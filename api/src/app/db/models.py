@@ -1,12 +1,15 @@
-from uuid import uuid4
 from datetime import datetime
+from uuid import uuid4
 
-from sqlalchemy import UniqueConstraint, Table, Column, TIMESTAMP, VARCHAR, ForeignKey, Text, Boolean, Float, func
-from sqlalchemy.orm import relationship
+from sqlalchemy import (TIMESTAMP, VARCHAR, Boolean, Column, Float, ForeignKey,
+                        Table, Text, UniqueConstraint, func)
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.db.postgres import Base
-from app.migrations.versions.cadd86cf19b7_initial import payment_platforms, payment_status, currencies
+from app.migrations.versions.cadd86cf19b7_initial import (currencies,
+                                                          payment_platforms,
+                                                          payment_status)
 
 
 class Payments(Base):

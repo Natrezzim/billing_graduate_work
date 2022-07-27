@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 from app.utils.tasks import sync
 
 

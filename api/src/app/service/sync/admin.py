@@ -1,5 +1,5 @@
-from app.service.sync.base import BaseSynchronizer
 from app.core.config import Settings
+from app.service.sync.base import BaseSynchronizer
 
 
 class AdminSynchronizer(BaseSynchronizer):

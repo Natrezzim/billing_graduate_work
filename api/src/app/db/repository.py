@@ -1,12 +1,10 @@
-from sqlalchemy import select, update, func, text
-from sqlalchemy.orm import selectinload
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from asyncio import get_event_loop
-from uuid import UUID
+from sqlalchemy.orm import selectinload
 
-from app.db.postgres import sessionmaker, engine
-from app.db.models import Payments, Status, Cart, Products, ProductsToCart
 from app.core.models import AdminPayment, AuthPayment, Product
+from app.db.models import Cart, Payments, Status
+from app.db.postgres import engine, sessionmaker
 
 
 class SyncRepository:
@@ -30,6 +28,11 @@ class SyncRepository:
                 await self.add_admin_item(payment, status, products)
                 if status.paid:
                     await self.add_auth_item(payment, status, products)
+
+    async def set_sync_flag(self) -> None:
+        async with self.session() as session:
+            query = update(Status).where(Status.id in self.statuses_ids).values(sync=True)
+            await session.execute(query)
 
     async def add_admin_item(self, payment, status, products):
         self.admin_data.append(
@@ -65,18 +68,3 @@ class SyncRepository:
             .where(Payments.cart_id == Cart.id)
             .order_by(Payments.id, Status.created_at.desc())
         )
-
-    async def set_sync_flag(self) -> None:
-        async with self.session() as session:
-            query = update(Status).where(Status.id in self.statuses_ids).values(sync=True)
-            await session.execute(query)
-
-
-if __name__ == '__main__':
-
-    loop = get_event_loop()
-    x = SyncRepository()
-    d = loop.run_until_complete(x.get_sync_data())
-    from pprint import pprint
-    pprint(d)
-    loop.run_until_complete(x.set_sync_flag([p.id for p in d[0]]))

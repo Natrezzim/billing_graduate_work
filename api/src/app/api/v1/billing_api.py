@@ -1,9 +1,10 @@
 import uuid
 
-from app.models.billing_models import PaymentsCreate
-from app.service.billing_service import PaymentsService, get_payments_service
 from fastapi import APIRouter, Depends
 from yookassa import Payment
+
+from app.models.billing_models import PaymentsCreate
+from app.service.billing_service import PaymentsService, get_payments_service
 
 router = APIRouter()
 
