@@ -1,11 +1,15 @@
-from uuid import uuid4
 from datetime import datetime
+from uuid import uuid4
 
-from sqlalchemy import UniqueConstraint, Column, TIMESTAMP, VARCHAR, ForeignKey, Text, Boolean, Float, func
+from sqlalchemy import (TIMESTAMP, VARCHAR, Boolean, Column, Float, ForeignKey,
+                        Table, Text, UniqueConstraint, func)
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.db.postgres import Base
-from app.migrations.versions.cadd86cf19b7_initial import payment_platforms, payment_status, currencies
+from app.migrations.versions.cadd86cf19b7_initial import (currencies,
+                                                          payment_platforms,
+                                                          payment_status)
 
 
 class Payments(Base):
@@ -36,20 +40,30 @@ class Products(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
     name = Column(VARCHAR(100), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    updated_at = Column(TIMESTAMP, nullable=False, onupdate=func.now())
-
-
-class Prices(Base):
-    __tablename__ = 'prices'
-    __table_args__ = (UniqueConstraint('product_id', 'currency', name='product_currency_uix'),)
-
-    id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
-    product_id = Column(UUID(as_uuid=True), ForeignKey('products.id'), nullable=False)
     value = Column(Float(asdecimal=True), nullable=False)
     currency = Column(currencies, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-    updated_at = Column(TIMESTAMP, nullable=False, onupdate=func.now())
+
+
+# class ProductsToCart(Base):
+#     __tablename__ = 'products_to_cart'
+#     __table_args__ = (UniqueConstraint('product_id', 'cart_id', name='product_cart_uix'),)
+#
+#     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
+#     product_id = Column(UUID(as_uuid=True), ForeignKey('products.id', ondelete="CASCADE"), nullable=False)
+#     cart_id = Column(UUID(as_uuid=True), ForeignKey('cart.id', ondelete="CASCADE"), nullable=False)
+#     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+
+
+ProductsToCart = Table(
+        'products_to_cart',
+        Base.metadata,
+        Column('id', UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
+        Column('product_id', UUID(as_uuid=True), ForeignKey('products.id'), nullable=False),
+        Column('cart_id', UUID(as_uuid=True), ForeignKey('cart.id'), nullable=False),
+        Column('created_at', TIMESTAMP, server_default=func.now()),
+        UniqueConstraint('product_id', 'cart_id', name='product_cart_uix')
+    )
 
 
 class Cart(Base):
@@ -57,13 +71,4 @@ class Cart(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-
-
-class ProductsToCart(Base):
-    __tablename__ = 'products_to_cart'
-    __table_args__ = (UniqueConstraint('product_id', 'cart_id', name='product_cart_uix'),)
-
-    id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
-    product_id = Column(UUID(as_uuid=True), ForeignKey('products.id'), nullable=False),
-    cart_id = Column(UUID(as_uuid=True), ForeignKey('cart.id'), nullable=False),
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    products = relationship(Products, secondary=ProductsToCart)
