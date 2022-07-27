@@ -2,12 +2,12 @@ import socket
 
 import asyncpg
 import backoff
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlmodel import SQLModel
 
 from app.core.config import Settings
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 
 settings = Settings()
 

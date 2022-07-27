@@ -3,12 +3,14 @@ import logging
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from app.utils.tasks import sync
+
 
 class TaskManager:
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
         self._scheduler = AsyncIOScheduler()
-        self._scheduler.add_job(None, 'cron', hour='*')
+        self._scheduler.add_job(sync, 'cron', minute='*/3')
 
     def run(self):
         try:
