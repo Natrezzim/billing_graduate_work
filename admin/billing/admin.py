@@ -4,9 +4,10 @@ import pytz
 from config import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
-from billing.models import Payment, Product
+from billing.models import Payment, Price, Product, ProductWithPrice
 
 admin.site.unregister(Group)
 
@@ -74,7 +75,7 @@ class CreatedListFilter(DateListFilter):
 
 
 class ProductInline(admin.TabularInline):
-    model = Product.payments.through
+    model = ProductWithPrice.payments.through
     verbose_name = 'Product'
     verbose_name_plural = 'Cart of Products'
     raw_id_fields = ('payment',)
@@ -86,16 +87,16 @@ class ProductInline(admin.TabularInline):
 class PaymentAdmin(admin.ModelAdmin):
 
     list_display = (
-        'id', 'username', 'payment_system', 'date', 'paid', 'payment_status',
+        'id', 'user_id', 'payment_system', 'date', 'paid', 'payment_status',
     )
     list_filter = ('payment_system', CreatedListFilter, 'paid', 'payment_status',)
     search_fields = (
-        'id', 'username', 'payment_system', 'paid', 'cart__name',
+        'id', 'user_id', 'payment_system', 'paid', 'cart__name',
     )
     ordering = ('created_at',)
     readonly_fields = ('id', 'created_at', 'updated_at')
     fields = (('id', 'created_at', 'updated_at'),
-              'username',
+              'user_id',
               ('payment_system', 'payment_status', 'paid'),)
     inlines = [ProductInline]
 
@@ -106,10 +107,28 @@ class PaymentAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'name', 'value', 'currency',)
+    list_display = ('id', 'name', 'type', 'description')
     ordering = ('name',)
     readonly_fields = ('id', 'created_at', 'updated_at',)
-    list_filter = ('name', 'currency',)
-    search_fields = ('name', 'currency', 'value',)
+    list_filter = ('name', 'type')
+    search_fields = ('name', 'type')
     fields = (('id', 'created_at', 'updated_at'),
-              ('name', 'value', 'currency'))
+              ('name', 'type', 'description'))
+
+
+@admin.register(Price)
+class PriceAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'product', 'value', 'currency', 'is_active',
+                    'description', 'count_active_price')
+    ordering = ('-is_active', 'currency',)
+    readonly_fields = ('id', 'created_at', 'updated_at',)
+    list_filter = ('is_active', 'currency')
+    search_fields = ('product__name', 'currency', 'description')
+    fields = (('id', 'created_at', 'updated_at'),
+              'is_active',
+              ('product', 'value', 'currency', 'description'))
+
+    def count_active_price(self, obj):
+        return Price.objects.filter(product__id=obj.product.id, is_active=True,
+                                    currency=obj.currency).count()
