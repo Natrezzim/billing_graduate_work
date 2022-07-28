@@ -45,16 +45,6 @@ class Products(Base):
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
 
-# class ProductsToCart(Base):
-#     __tablename__ = 'products_to_cart'
-#     __table_args__ = (UniqueConstraint('product_id', 'cart_id', name='product_cart_uix'),)
-#
-#     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
-#     product_id = Column(UUID(as_uuid=True), ForeignKey('products.id', ondelete="CASCADE"), nullable=False)
-#     cart_id = Column(UUID(as_uuid=True), ForeignKey('cart.id', ondelete="CASCADE"), nullable=False)
-#     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
-
-
 ProductsToCart = Table(
         'products_to_cart',
         Base.metadata,

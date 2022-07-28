@@ -1,11 +1,11 @@
 import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 from yookassa import Payment
 
-from app.service.auth_service import Auth
 from app.models.billing_models import PaymentsCreate
+from app.service.auth_service import Auth
 from app.service.billing_service import PaymentsService, get_payments_service
 
 router = APIRouter()
@@ -14,13 +14,13 @@ security = HTTPBearer()
 
 
 @router.get('/payment')
-async def get_payments(credentials: HTTPBasicCredentials = Depends(security)):
+async def get_payments(credentials: HTTPBasicCredentials = Depends(security), limit: int = Query(10)):
     '''
     Получить список последних 10 платежей
     '''
     token = credentials.credentials
-    user_id = auth_handler.decode_token(token)
-    params = {'limit': 10}
+    auth_handler.decode_token(token)
+    params = {'limit': limit}
     payment_list = Payment.list(params)
     return payment_list
 
@@ -32,7 +32,7 @@ async def get_payment_by_id(payment_id: str,
     Получить платеж по payment_id
     '''
     token = credentials.credentials
-    user_id = auth_handler.decode_token(token)
+    auth_handler.decode_token(token)
 
     payment = Payment.find_one(payment_id)
     return payment
