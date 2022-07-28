@@ -6,6 +6,8 @@ class Settings(BaseSettings):
 
     auth_secret: str = Field('verystrongsecretkey', env='AUTH_SECRET')
 
+    payments_limit: int = Field(10, env='PAYMENTS_LIMIT')
+
     db_driver: str = Field('postgresql', env='DRIVER')
     db_host: str = Field('postgres', env='DB_HOST_BILLING')
     db_port: str = Field('5432', env='DB_PORT_BILLING')
