@@ -20,6 +20,7 @@ class PaymentRepository(BaseRepository):
     async def update_payment(self, payment: UpdatePayment):
         async with self.session() as session:
             await self._create_status(session, payment)
+            session.commit()
 
     @staticmethod
     async def _create_cart(session: AsyncSession, products: list[dict]):
