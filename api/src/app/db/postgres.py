@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlmodel import SQLModel
 
-from app.core.config import Settings
+from app.core.config import get_settings
 
-settings = Settings()
+settings = get_settings()
 
 DATABASE_URL = f'postgresql+asyncpg://{settings.db_user}:{settings.db_password}@{settings.db_host}' \
                f':{settings.db_port}/{settings.db_name}'

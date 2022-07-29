@@ -8,11 +8,11 @@ from fastapi.responses import ORJSONResponse
 from yookassa import Configuration
 
 from app.api.v1 import billing_api, webhooks_api
-from app.core.config import Settings
+from app.core.config import get_settings
 from app.custom_logging import CustomizeLogger
 from app.db.postgres import init_db, test_connection
 
-settings = Settings()
+settings = get_settings()
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,9 @@
-from app.core.config import Settings
+from app.core.config import get_settings
 from app.service.sync.base import BaseSynchronizer
+
+settings = get_settings()
 
 
 class AdminSynchronizer(BaseSynchronizer):
-    url = f'{Settings.admin_url}{Settings.admin_sync_path}'
-    auth = (Settings.admin_login, Settings.admin_password)
+    url = f'{settings.admin_url}{settings.admin_sync_path}'
+    auth = (settings.admin_login, settings.admin_password)

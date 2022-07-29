@@ -3,7 +3,7 @@ import time
 from http import HTTPStatus
 
 from app.core.models import Payments
-from app.db.repository import SyncRepository
+from app.db.repository.sync import SyncRepository
 from app.service.sync import SYNCHRONIZERS
 
 LOGGER = logging.getLogger(__name__)

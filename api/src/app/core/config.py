@@ -1,4 +1,5 @@
 from pydantic import BaseSettings, Field
+from functools import lru_cache
 
 
 class Settings(BaseSettings):
@@ -19,7 +20,7 @@ class Settings(BaseSettings):
     auth_sync_path: str = Field('/api/v1/sync', env='AUTH_SYNC_PATH')
     auth_token: str = Field('super-secret-token', env='AUTH_TOKEN')
 
-    admin_url: str = Field('auth_service', env='ADMIN_URL')
+    admin_url: str = Field('admin_service', env='ADMIN_URL')
     admin_sync_path: str = Field('/v1/payments', env='ADMIN_SYNC_PATH')
     admin_login: str = Field('user', env='ADMIN_LOGIN')
     admin_password: str = Field('pass', env='ADMIN_PASSWORD')
@@ -30,3 +31,8 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+
+
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()

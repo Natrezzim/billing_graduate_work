@@ -7,8 +7,9 @@ from yookassa import Payment
 from app.models.billing_models import PaymentsCreate
 from app.service.auth_service import Auth
 from app.service.billing_service import PaymentsService, get_payments_service
-from app.core.config import Settings
+from app.core.config import get_settings
 
+settings = get_settings()
 router = APIRouter()
 auth_handler = Auth()
 security = HTTPBearer()
@@ -16,7 +17,7 @@ security = HTTPBearer()
 
 @router.get('/payment')
 async def get_payments(credentials: HTTPBasicCredentials = Depends(security),
-                       limit: int = Query(Settings.payments_limit)):
+                       limit: int = Query(settings.payments_limit)):
     '''
     Получить список последних 10 платежей
     '''

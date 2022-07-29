@@ -5,9 +5,9 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.config import Settings
+from app.core.config import get_settings
 
-settings = Settings()
+settings = get_settings()
 
 
 class Auth:
