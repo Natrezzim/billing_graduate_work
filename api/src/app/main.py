@@ -3,15 +3,11 @@ import os
 from pathlib import Path
 
 import uvicorn
-from app.api.v1 import billing_api, webhooks_api
-from app.core.config import Settings
-from app.custom_logging import CustomizeLogger
-from app.db.postgres import test_connection, init_db
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from yookassa import Configuration
 
-from app.api.v1 import billing_api
+from app.api.v1 import billing_api, webhooks_api
 from app.core.config import Settings
 from app.custom_logging import CustomizeLogger
 from app.db.postgres import init_db, test_connection

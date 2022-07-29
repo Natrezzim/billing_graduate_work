@@ -2,9 +2,10 @@ from http import HTTPStatus
 from typing import Dict
 
 import jwt
-from app.core.config import Settings
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from app.core.config import Settings
 
 settings = Settings()
 

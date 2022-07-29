@@ -91,7 +91,6 @@ class CustomizeLogger:
 
     @classmethod
     def load_logging_config(cls, config_path):
-        config = None
         with open(config_path) as config_file:
             config = json.load(config_file)
         return config

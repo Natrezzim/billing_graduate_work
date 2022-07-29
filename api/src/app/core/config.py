@@ -1,4 +1,3 @@
-
 from pydantic import BaseSettings, Field
 
 
@@ -6,6 +5,8 @@ class Settings(BaseSettings):
     project_name: str = Field('Billing', env='PROJECT_NAME')
 
     auth_secret: str = Field('verystrongsecretkey', env='AUTH_SECRET')
+
+    payments_limit: int = Field(10, env='PAYMENTS_LIMIT')
 
     db_driver: str = Field('postgresql', env='DRIVER')
     db_host: str = Field('postgres', env='DB_HOST_BILLING')
