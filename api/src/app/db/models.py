@@ -17,7 +17,7 @@ class Payments(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     cart_id = Column(UUID(as_uuid=True), ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
-    username = Column(VARCHAR(100), nullable=False)
+    user_id = Column(UUID(as_uuid=True), nullable=False)
     idempotence_uuid = Column(UUID(as_uuid=True), nullable=False)
     description = Column(Text, nullable=False)
     payment_system = Column(payment_platforms, nullable=False)
@@ -29,7 +29,7 @@ class Status(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     payment_id = Column(UUID(as_uuid=True), ForeignKey("payments.id", ondelete="CASCADE"), nullable=False)
-    status = Column(payment_status, nullable=False)
+    status = Column(payment_status, nullable=True)
     created_at = Column(TIMESTAMP, default=datetime.now())
     paid = Column(Boolean, default=False)
     sync = Column(Boolean, default=False)

@@ -4,6 +4,8 @@ WORKDIR /usr/src
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
+
 USER root
 RUN apk update && \
     apk add build-base librdkafka-dev && \
