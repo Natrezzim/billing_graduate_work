@@ -132,3 +132,12 @@ class PriceAdmin(admin.ModelAdmin):
     def count_active_price(self, obj):
         return Price.objects.filter(product__id=obj.product.id, is_active=True,
                                     currency=obj.currency).count()
+
+
+@admin.register(ProductWithPrice)
+class ProductWithPriceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'price',)
+    ordering = ('id',)
+    readonly_fields = ('id', 'created_at', 'updated_at',)
+    fields = (('id', 'created_at', 'updated_at'),
+              ('product', 'price'))

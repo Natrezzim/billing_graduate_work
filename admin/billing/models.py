@@ -2,6 +2,7 @@ import uuid
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -55,8 +56,8 @@ class Payment(models.Model):
                                       db_index=True)
     payment_status = models.CharField(_('payment status'), max_length=50)
     paid = models.BooleanField(_('paid'))
-    created_at = models.DateTimeField(_('created at'))
-    updated_at = models.DateTimeField(_('updated at'))
+    created_at = models.DateTimeField(_('created at'), default=timezone.now)
+    updated_at = models.DateTimeField(_('updated at'), default=timezone.now)
 
     class Meta:
         verbose_name = _('payment')
@@ -79,7 +80,7 @@ class ProductWithPrice(models.Model):
 
     class Meta:
         verbose_name = _('cart')
-        verbose_name_plural = _('carts')
+        verbose_name_plural = _('cart')
         db_table = "admin\".\"cart"
 
     def __str__(self):
