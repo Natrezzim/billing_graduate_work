@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 import orjson
@@ -23,7 +23,7 @@ class Product(BaseOrJSONModel):
 
 class AdminPayment(BaseOrJSONModel):
     id: UUID
-    username: str
+    user_id: UUID
     cart: List[Product]
     payment_status: str
     payment_system: str
@@ -45,3 +45,17 @@ class AuthPayment(BaseOrJSONModel):
     username: str
     product_name: str
     created_at: str
+
+
+class CreatePayment(BaseOrJSONModel):
+    id: UUID
+    user_id: UUID
+    payment_system: str
+    products: list[Product]
+    cart_id: Optional[UUID]
+
+
+class UpdatePayment(BaseOrJSONModel):
+    id: UUID
+    payment_status: str
+    paid: bool = False

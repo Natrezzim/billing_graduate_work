@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     auth_token: str = Field('super-secret-token', env='AUTH_TOKEN')
 
     admin_url: str = Field('auth_service', env='ADMIN_URL')
-    admin_sync_path: str = Field('/api/v1/sync', env='ADMIN_SYNC_PATH')
+    admin_sync_path: str = Field('/v1/payments', env='ADMIN_SYNC_PATH')
     admin_login: str = Field('user', env='ADMIN_LOGIN')
     admin_password: str = Field('pass', env='ADMIN_PASSWORD')
 

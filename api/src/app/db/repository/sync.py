@@ -1,23 +1,18 @@
 from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.models import AdminPayment, AuthPayment, Product
+from app.db.repository.base import BaseRepository
 from app.db.models import Cart, Payments, Status
-from app.db.postgres import engine, sessionmaker
 
 
-class SyncRepository:
+class SyncRepository(BaseRepository):
     def __init__(self):
-        self._session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+        super().__init__()
         self.auth_data = list()
         self.admin_data = list()
         self.statuses_ids = list()
         self.all_data = (self.admin_data, self.auth_data)
-
-    @property
-    def session(self):
-        return self._session
 
     async def set_sync_data(self, sync=False):
         async with self.session() as session:
@@ -38,7 +33,7 @@ class SyncRepository:
         self.admin_data.append(
             AdminPayment(
                 id=payment.id,
-                username=payment.username,
+                user_id=payment.user_id,
                 cart=products,
                 payment_status=status.status,
                 payment_system=payment.payment_system,
@@ -50,7 +45,7 @@ class SyncRepository:
 
     async def add_auth_item(self, payment, status, products):
         self.auth_data.extend(
-            AuthPayment(username=payment.username, product_name=p.name, created_at=str(status.created_at))
+            AuthPayment(user_id=payment.user_id, product_name=p.name, created_at=str(status.created_at))
             for p in products
         )
 
