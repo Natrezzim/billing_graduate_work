@@ -20,7 +20,7 @@ class TransactionView(View):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        #self.logger = structlog.get_logger(self.__class__.__name__)
+        self.logger = structlog.get_logger(self.__class__.__name__)
 
     def _separate_records(self, records):
         records_for_update = []
