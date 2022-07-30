@@ -4,7 +4,6 @@ import pytz
 from config import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
 from billing.models import Payment, Price, Product, ProductWithPrice
