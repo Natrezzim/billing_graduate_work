@@ -22,7 +22,7 @@ class ProductWithPrice(OrjsonMixin):
 
 class ValidPayment(OrjsonMixin):
     id: UUID
-    user_id: str
+    user_id: UUID
     cart: List[ProductWithPrice]
     payment_system: str
     payment_status: str

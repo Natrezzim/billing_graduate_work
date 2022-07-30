@@ -44,7 +44,7 @@ class Price(models.Model):
 
     def __str__(self):
         return (f'{self.product.name}: {self.value} {self.currency} :'
-                f'{self.description[:100]}')
+                f'{self.description[:100]} -- {self.is_active}')
 
 
 class Payment(models.Model):

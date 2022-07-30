@@ -44,13 +44,15 @@ class TransactionView(View):
 
 class ListPriceView(View):
 
+    model = Price
+
     required_fields = [
             'product__id', 'product__name', 'product__type',
             'product__description', 'id', 'value', 'currency',
             'description', 'is_active'
         ]
-    product_key = ['id', 'name', 'type', 'description']
-    price_key = ['id', 'value', 'currency', 'description', 'is_active']
+    product_keys = ['id', 'name', 'type', 'description']
+    price_keys = ['id', 'value', 'currency', 'description', 'is_active']
 
     def get(self, request):
         base_qs = Price.objects.filter(is_active=True).order_by('product__id')
@@ -58,8 +60,8 @@ class ListPriceView(View):
         products = []
         current = None
         for record in queryset:
-            product = ValidProduct(**dict(zip(self.product_key, record[:4])))
-            price = ValidPrice(**dict(zip(self.price_key, record[4:])))
+            product = ValidProduct(**dict(zip(self.product_keys, record[:4])))
+            price = ValidPrice(**dict(zip(self.price_keys, record[4:])))
             current = current if current else product
             if product.id != current.id:
                 products.append(current.dict())

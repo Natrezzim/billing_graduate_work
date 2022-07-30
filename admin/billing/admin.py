@@ -121,9 +121,9 @@ class PriceAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'product', 'value', 'currency', 'is_active',
                     'description', 'count_active_price')
-    ordering = ('-is_active', 'currency',)
+    ordering = ('-is_active', 'product__name', 'currency',)
     readonly_fields = ('id', 'created_at', 'updated_at',)
-    list_filter = ('is_active', 'currency')
+    list_filter = ('is_active', 'currency', 'product')
     search_fields = ('product__name', 'currency', 'description')
     fields = (('id', 'created_at', 'updated_at'),
               'is_active',

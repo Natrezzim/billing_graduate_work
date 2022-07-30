@@ -129,6 +129,7 @@ STATIC_ROOT = BASE_DIR.joinpath('static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+"""
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -192,3 +193,4 @@ structlog.configure(
     wrapper_class=structlog.stdlib.BoundLogger,
     cache_logger_on_first_use=True,
 )
+"""
