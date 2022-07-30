@@ -4,7 +4,7 @@ services:
 
   service:
     container_name: billing_api
-    entrypoint: uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log
+    entrypoint: sh -c "sleep 10 && cd /usr/src/app/migrations && alembic upgrade head && python /usr/src/app/scheduler.py"
     build:
       context: api/src/app
       dockerfile: ./Dockerfile
