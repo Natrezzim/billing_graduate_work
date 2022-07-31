@@ -31,6 +31,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('role_type')
     )
+    op.execute(
+        """INSERT INTO role (id, role_type, description) VALUES (
+        ('22441e1f-9313-435b-a32d-f5f1c695837b'),
+        ('subscribe'),
+        ('subscribe on 1 month or 3 months or 6 months or 1 year')
+        )"""
+    ),
     op.create_table('users',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('username', sa.String(), nullable=False),

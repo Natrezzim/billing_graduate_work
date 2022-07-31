@@ -1,9 +1,10 @@
 import json
-import os
 import logging
+import os
 
 from app.api.v1.routes.routes import initialize_routes
 from app.api.v1.service.auth_service.auth_api import auth, auth_namespace
+from app.api.v1.service.auth_service.billing_sync import billing_sync_namespace, sync
 from app.api.v1.service.role_service.cli_commands import adm_cmd
 from app.api.v1.service.role_service.roles_api import role_namespace, roles
 from app.data.db.db import init_db
@@ -43,8 +44,10 @@ initialize_routes(api)
 app.register_blueprint(auth)
 app.register_blueprint(roles)
 app.register_blueprint(adm_cmd)
+app.register_blueprint(sync)
 api.add_namespace(role_namespace)
 api.add_namespace(auth_namespace)
+api.add_namespace(billing_sync_namespace)
 init_rate_limit(app)
 init_jaeger(app)
 configure_tracer()
