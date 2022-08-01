@@ -5,7 +5,7 @@ services:
   service:
     container_name: billing_api
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-api:{{ env.IMAGE_TAG }}
-    entrypoint: sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log"
+    entrypoint: sh -c "sleep 10 && cd /usr/src/app/migrations && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8010 --access-log"
     volumes:
       - billing_log:/usr/src/app/logs
     ports:
