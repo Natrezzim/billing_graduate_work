@@ -40,6 +40,7 @@ class Products(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4)
     name = Column(VARCHAR(100), nullable=False)
+    price_id = Column(UUID(as_uuid=True), nullable=False)
     value = Column(Float(asdecimal=True), nullable=False)
     currency = Column(currencies, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())

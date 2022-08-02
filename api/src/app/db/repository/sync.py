@@ -1,16 +1,16 @@
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
-from app.core.models import AdminPayment, AuthPayment, Product
-from app.db.repository.base import BaseRepository
+from app.core.models import AdminPayment, AuthPayment, SyncProduct
 from app.db.models import Cart, Payments, Status
+from app.db.repository.base import BaseRepository
 
 
 class SyncRepository(BaseRepository):
     def __init__(self):
         super().__init__()
-        self.auth_data = list()
         self.admin_data = list()
+        self.auth_data = list()
         self.statuses_ids = list()
         self.all_data = (self.admin_data, self.auth_data)
 
@@ -18,16 +18,18 @@ class SyncRepository(BaseRepository):
         async with self.session() as session:
             query = await self.get_query(sync)
             for payment, cart, status in await session.execute(query):
-                products = [Product(name=p.name, value=p.value, currency=p.currency) for p in cart.products]
-                self.statuses_ids.append(status.id)
-                await self.add_admin_item(payment, status, products)
-                if status.paid:
-                    await self.add_auth_item(payment, status, products)
+                if status.status:
+                    products = [SyncProduct(priduct_id=p.id, cart_id=p.cart_id) for p in cart.products]
+                    self.statuses_ids.append(status.id)
+                    await self.add_admin_item(payment, status, products)
+                    if status.paid:
+                        await self.add_auth_item(payment, status, products)
 
     async def set_sync_flag(self) -> None:
         async with self.session() as session:
-            query = update(Status).where(Status.id in self.statuses_ids).values(sync=True)
+            query = update(Status).filter(Status.id.in_(self.statuses_ids)).values(sync=True)
             await session.execute(query)
+            await session.commit()
 
     async def add_admin_item(self, payment, status, products):
         self.admin_data.append(

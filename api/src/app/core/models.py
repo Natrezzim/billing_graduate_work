@@ -2,7 +2,7 @@ from typing import List, Optional
 from uuid import UUID
 
 import orjson
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 def orjson_dumps(v, *, default):
@@ -15,7 +15,14 @@ class BaseOrJSONModel(BaseModel):
         json_dumps = orjson_dumps
 
 
+class SyncProduct(BaseOrJSONModel):
+    product_id: UUID
+    price_id: UUID
+
+
 class Product(BaseOrJSONModel):
+    id: UUID
+    price_id: UUID
     name: str
     value: float
     currency: str
@@ -24,7 +31,7 @@ class Product(BaseOrJSONModel):
 class AdminPayment(BaseOrJSONModel):
     id: UUID
     user_id: UUID
-    cart: List[Product]
+    cart: List[SyncProduct]
     payment_status: str
     payment_system: str
     paid: bool
@@ -42,7 +49,7 @@ class Payments(BaseOrJSONModel):
 
 
 class AuthPayment(BaseOrJSONModel):
-    username: str
+    user_id: UUID
     product_name: str
     created_at: str
 
@@ -50,12 +57,22 @@ class AuthPayment(BaseOrJSONModel):
 class CreatePayment(BaseOrJSONModel):
     id: UUID
     user_id: UUID
+    idempotence_uuid: UUID
     payment_system: str
     products: list[Product]
     cart_id: Optional[UUID]
+    description: str
 
 
 class UpdatePayment(BaseOrJSONModel):
     id: UUID
     payment_status: str
     paid: bool = False
+
+
+class Headers(BaseOrJSONModel):
+    x_requers_id: str = Field(..., alias='x-request-id')
+    host: str = Field(..., alias='Host')
+
+    class Config:
+        allow_population_by_field_name = True
