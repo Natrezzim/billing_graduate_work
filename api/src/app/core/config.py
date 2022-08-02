@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     payments_limit: int = Field(10, env='PAYMENTS_LIMIT')
 
     db_driver: str = Field('postgresql', env='DRIVER')
-    db_host: str = Field('localhost', env='DB_HOST_BILLING')
+    db_host: str = Field('postgres', env='DB_HOST_BILLING')
     db_port: str = Field('5432', env='DB_PORT_BILLING')
     db_name: str = Field('billing_db', env='DB_NAME_BILLING')
     db_user: str = Field('postgres', env='POSTGRES_USER')
