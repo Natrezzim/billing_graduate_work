@@ -3,6 +3,7 @@ from app.api.v1.service.auth_service.auth_api import (
     ChangeAuthDataAPI, HistoryAuthAPI, LoginApi, LogoutAPI, RefreshAPI, RegistrationAPI, Totp2FA, Totp2FALogin)
 from app.api.v1.service.auth_service.oauth_api import AuthorizationYandex, LoginYandex
 from app.api.v1.service.role_service.roles_api import RolesAPI, UserRolesAPI
+from app.api.v1.service.auth_service.billing_sync import BillingSyncAPI
 
 
 def initialize_routes(api):
@@ -18,3 +19,4 @@ def initialize_routes(api):
     api.add_resource(AuthorizationYandex, '/api/v1/login/yandex/authorize')
     api.add_resource(Totp2FA, '/api/v1/login/totp')
     api.add_resource(Totp2FALogin, '/api/v1/login/totp/login')
+    api.add_resource(BillingSyncAPI, '/api/v1/sync')
