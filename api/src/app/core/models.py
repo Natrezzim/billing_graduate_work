@@ -16,11 +16,13 @@ class BaseOrJSONModel(BaseModel):
 
 
 class SyncProduct(BaseOrJSONModel):
-    id: UUID
+    product_id: UUID
     price_id: UUID
 
 
-class Product(SyncProduct):
+class Product(BaseOrJSONModel):
+    id: UUID
+    price_id: UUID
     name: str
     value: float
     currency: str
