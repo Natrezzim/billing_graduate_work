@@ -53,6 +53,7 @@ def upgrade() -> None:
         sa.Column('value', sa.Float(asdecimal=True), nullable=False),
         sa.Column('currency', currencies, nullable=False),
         sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()),
+        sa.UniqueConstraint('name', 'value', 'currency', name='product_uix')
     )
     op.create_table(
         'products_to_cart',
@@ -69,7 +70,6 @@ def downgrade() -> None:
     op.drop_table('products_to_cart')
     op.drop_table('payments')
     op.drop_table('cart')
-    op.drop_table('prices')
     op.drop_table('products')
     op.execute('DROP TYPE payment_platform_enum')
     op.execute('DROP TYPE payment_status_enum')

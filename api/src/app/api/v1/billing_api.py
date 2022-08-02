@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.security import HTTPBasicCredentials, HTTPBearer
 from yookassa import Payment
 
+from app.core.config import get_settings
 from app.models.billing_models import PaymentsCreate
 from app.service.auth_service import Auth
 from app.service.billing_service import PaymentsService, get_payments_service
-from app.core.config import get_settings
 
 settings = get_settings()
 router = APIRouter()

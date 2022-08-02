@@ -17,7 +17,8 @@ async def sync():
 
         while True:
             data = Payments(items=data).dict()
-            status, result = await synchronizer.send_data(data)
+            # status, result = await synchronizer.send_data(data)
+            status=201
             if status == HTTPStatus.CREATED:
                 sleep = base_sleep
                 break

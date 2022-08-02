@@ -31,19 +31,18 @@ class InterceptHandler(logging.Handler):
         log.opt(
             depth=depth,
             exception=record.exc_info
-        ).log(level,record.getMessage())
+        ).log(level, record.getMessage())
 
 
 class CustomizeLogger:
 
     @classmethod
-    def make_logger(cls,config_path: Path):
-
+    def make_logger(cls, config_path: Path):
         config = cls.load_logging_config(config_path)
         logging_config = config.get('logger')
 
         logger = cls.customize_logging(
-            logging_config.get('path') ,
+            logging_config.get('path'),
             level=logging_config.get('level'),
             retention=logging_config.get('retention'),
             rotation=logging_config.get('rotation'),
@@ -53,13 +52,12 @@ class CustomizeLogger:
 
     @classmethod
     def customize_logging(cls,
-            filepath: Path,
-            level: str,
-            rotation: str,
-            retention: str,
-            format: str
-    ):
-
+                          filepath: Path,
+                          level: str,
+                          rotation: str,
+                          retention: str,
+                          format: str
+                          ):
         logger.remove()
         logger.add(
             sys.stdout,
@@ -87,7 +85,6 @@ class CustomizeLogger:
             _logger.handlers = [InterceptHandler()]
 
         return logger.bind(request_id=None, method=None)
-
 
     @classmethod
     def load_logging_config(cls, config_path):

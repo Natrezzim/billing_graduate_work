@@ -1,6 +1,10 @@
 from abc import ABCMeta, abstractmethod
+from uuid import uuid4
 
+import orjson
 from requests import post
+
+from app.core.models import Headers
 
 
 class Synchronizer(metaclass=ABCMeta):
@@ -18,5 +22,10 @@ class Synchronizer(metaclass=ABCMeta):
 
 class BaseSynchronizer(Synchronizer):
     async def send_data(self, data: list[dict]) -> (int, dict):
-        result = post(url=self.url, data=data, auth=self.auth)
-        return result.status_code, result.json()
+        headers = Headers(x_requers_id=uuid4().__str__(), host='localhost').dict(by_alias=True)
+        result = post(url=self.url, json=orjson.dumps(data), auth=self.auth, headers=headers)
+        try:
+            res = result.json()
+        except:
+            res = {}
+        return result.status_code, res
