@@ -59,7 +59,7 @@ class CreatePayment(BaseOrJSONModel):
 
 class UpdatePayment(BaseOrJSONModel):
     id: UUID
-    payment_status: Optional[str]
+    payment_status: str
     paid: bool = False
 
 
