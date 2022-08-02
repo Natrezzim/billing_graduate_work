@@ -15,7 +15,12 @@ class BaseOrJSONModel(BaseModel):
         json_dumps = orjson_dumps
 
 
-class Product(BaseOrJSONModel):
+class SyncProduct(BaseOrJSONModel):
+    id: UUID
+    price_id: UUID
+
+
+class Product(SyncProduct):
     name: str
     value: float
     currency: str
@@ -24,7 +29,7 @@ class Product(BaseOrJSONModel):
 class AdminPayment(BaseOrJSONModel):
     id: UUID
     user_id: UUID
-    cart: List[Product]
+    cart: List[SyncProduct]
     payment_status: str
     payment_system: str
     paid: bool

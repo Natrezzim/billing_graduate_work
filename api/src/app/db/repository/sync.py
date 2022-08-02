@@ -1,7 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
-from app.core.models import AdminPayment, AuthPayment, Product
+from app.core.models import AdminPayment, AuthPayment, SyncProduct
 from app.db.models import Cart, Payments, Status
 from app.db.repository.base import BaseRepository
 
@@ -19,7 +19,7 @@ class SyncRepository(BaseRepository):
             query = await self.get_query(sync)
             for payment, cart, status in await session.execute(query):
                 if status.status:
-                    products = [Product(name=p.name, value=p.value, currency=p.currency) for p in cart.products]
+                    products = [SyncProduct(id=p.id, cart_id=p.cart_id) for p in cart.products]
                     self.statuses_ids.append(status.id)
                     await self.add_admin_item(payment, status, products)
                     if status.paid:

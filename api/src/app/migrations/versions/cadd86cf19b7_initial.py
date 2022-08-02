@@ -48,7 +48,8 @@ def upgrade() -> None:
     )
     op.create_table(
         'products',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False, default=uuid4),
+        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True, nullable=False),
+        sa.Column('price_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('name', sa.VARCHAR(100), nullable=False),
         sa.Column('value', sa.Float(asdecimal=True), nullable=False),
         sa.Column('currency', currencies, nullable=False),
