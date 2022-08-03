@@ -19,7 +19,7 @@ class SyncRepository(BaseRepository):
             query = await self.get_query(sync)
             for payment, cart, status in await session.execute(query):
                 if status.status:
-                    products = [SyncProduct(priduct_id=p.id, cart_id=p.cart_id) for p in cart.products]
+                    products = [SyncProduct(priduct_id=p.id, price_id=p.price_id) for p in cart.products]
                     self.statuses_ids.append(status.id)
                     await self.add_admin_item(payment, status, products)
                     if status.paid:
