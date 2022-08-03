@@ -6,4 +6,4 @@ settings = get_settings()
 
 class AuthSynchronizer(BaseSynchronizer):
     url = f'{settings.auth_url}{settings.auth_sync_path}'
-    auth = settings.auth_token
+    auth = None

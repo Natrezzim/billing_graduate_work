@@ -22,8 +22,8 @@ class Synchronizer(metaclass=ABCMeta):
 
 class BaseSynchronizer(Synchronizer):
     async def send_data(self, data: str) -> (int, dict):
-        headers = Headers(x_requers_id=uuid4().__str__(), host='localhost').dict(by_alias=True)
-        result = post(url=self.url, json=data, auth=self.auth, headers=headers)
+        headers = Headers(x_requers_id=uuid4().__str__(), host='localhost', content_type='application/json').dict(by_alias=True)
+        result = post(url=self.url, data=data, auth=self.auth, headers=headers)
         try:
             res = result.json()
         except:

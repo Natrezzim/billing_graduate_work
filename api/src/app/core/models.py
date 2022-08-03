@@ -72,8 +72,9 @@ class UpdatePayment(BaseOrJSONModel):
 
 
 class Headers(BaseOrJSONModel):
-    x_requers_id: str = Field(..., alias='x-request-id')
+    x_requers_id: str = Field(..., alias='X-Request-Id')
     host: str = Field(..., alias='Host')
+    content_type: str = Field(..., alias='Content-Type')
 
     class Config:
         allow_population_by_field_name = True

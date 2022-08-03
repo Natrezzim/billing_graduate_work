@@ -32,6 +32,34 @@ services:
     depends_on:
       - db
 
+  cron:
+    container_name: billing_cron
+    image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing_cron:{{ env.IMAGE_TAG }}
+    entrypoint: sh -c "sleep 30 && cd /usr/src/app && python scheduler.py"
+    ports:
+      - "8011"
+    environment:
+      PROJECT_NAME: {{ env.PROJECT_NAME }}
+      AUTH_SECRET: {{ env.JWT_SECRET_KEY }}
+      DB_HOST_BILLING: {{ env.DB_HOST_BILLING }}
+      DB_PORT_BILLING: {{ env.DB_PORT_BILLING }}
+      DB_NAME_BILLING: {{ env.DB_NAME_BILLING }}
+      YOOKASSA_ACCOUNT_ID: {{ env.YOOKASSA_ACCOUNT_ID }}
+      YOOKASSA_SECRET_KEY: {{ env.YOOKASSA_SECRET_KEY }}
+      YOOKASSA_ACCESS_TOKEN: {{ env.YOOKASSA_ACCESS_TOKEN }}
+      DATABASE_URL: {{ env.DATABASE_URL }}
+      POSTGRES_USER: {{ env.POSTGRES_USER }}
+      POSTGRES_PASSWORD: {{ env.POSTGRES_PASSWORD }}
+      AUTH_URL: {{ env.AUTH_URL }}
+      AUTH_SYNC_PATH: {{ env.AUTH_SYNC_PATH }}
+      AUTH_TOKEN: {{ env.AUTH_TOKEN }}
+      ADMIN_URL: {{ env.ADMIN_URL }}
+      ADMIN_SYNC_PATH: {{ env.ADMIN_SYNC_PATH }}
+      ADMIN_LOGIN: {{ env.ADMIN_LOGIN }}
+      ADMIN_PASSWORD: {{ env.ADMIN_PASSWORD }}
+    depends_on:
+      - service
+
   auth_service:
     container_name: auth_api
     image: cr.yandex/crpis5t0f3nv1ncr2fe9/billing-auth:{{ env.IMAGE_TAG }}
