@@ -1,9 +1,9 @@
 from uuid import UUID
-
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import CreatePayment, UpdatePayment
+from app.core.models import CreatePayment, UpdatePayment, Product
 from app.db.models import Cart, Payments, Products, Status
 from app.db.repository.base import BaseRepository
 
@@ -11,7 +11,7 @@ from app.db.repository.base import BaseRepository
 class PaymentRepository(BaseRepository):
     async def create_new_payment(self, payment: CreatePayment) -> UUID:
         async with self.session() as session:
-            payment.cart_id = await self._create_cart(session, [item.dict() for item in payment.products])
+            payment.cart_id = await self._create_cart(session, payment.products)
             p = payment.dict()
             p.pop('products')
             payment_id = await self._create_payment(session, p)
@@ -26,16 +26,13 @@ class PaymentRepository(BaseRepository):
             )
             await session.commit()
 
-    @staticmethod
-    async def _create_cart(session: AsyncSession, products: list[dict]) -> UUID:
-        create_products_query = (insert(Products).values(products)
-                                 .on_conflict_do_nothing(index_elements=['name', 'value', 'currency'])
-                                 .returning(Products))
-        products = await session.execute(create_products_query)
-
+    async def _create_cart(self, session: AsyncSession, products: list[Product]) -> UUID:
         cart = Cart()
         for product in products:
-            cart.products.append(Products(**product))
+            product = await self.get_or_create(
+                session, Products, name=product.name, value=product.value, currency=product.currency, id=product.id
+            )
+            cart.products.append(product)
         session.add(cart)
         await session.flush()
         return cart.id
@@ -52,3 +49,15 @@ class PaymentRepository(BaseRepository):
         query = insert(Status).values(payment_id=payment_id, status=payment_status, paid=paid)
         await session.execute(query)
         await session.flush()
+
+    @staticmethod
+    async def get_or_create(session, model, id=None, **kwargs):
+        query = select(model).filter_by(**kwargs)
+        instance = (await session.execute(query)).first()
+        if instance:
+            return instance[0]
+        else:
+            instance = model(id=id, **kwargs)
+            session.add(instance)
+            session.flush()
+            return instance
