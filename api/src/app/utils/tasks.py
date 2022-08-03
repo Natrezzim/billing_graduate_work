@@ -14,9 +14,8 @@ async def sync():
     base_sleep = sleep = 3
     await repository.set_sync_data()
     for data, synchronizer in zip(repository.all_data, SYNCHRONIZERS):
-
         while True:
-            data = Payments(items=data).dict()
+            data = Payments(items=data).json()
             status, result = await synchronizer.send_data(data)
             if status == HTTPStatus.CREATED:
                 sleep = base_sleep

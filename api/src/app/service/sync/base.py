@@ -12,18 +12,18 @@ class Synchronizer(metaclass=ABCMeta):
     auth: str
 
     @abstractmethod
-    async def send_data(self, data: list[dict]) -> (int, dict):
+    async def send_data(self, data: str) -> (int, dict):
         """
         Метод для отправки данных во внешние сервисы.
-        :param data: список оз обхектов для синхронизации.
+        :param data: список оз обхектов для синхронизации в формате json.
         :return: (статус ответа, тело ответа)
         """
 
 
 class BaseSynchronizer(Synchronizer):
-    async def send_data(self, data: list[dict]) -> (int, dict):
+    async def send_data(self, data: str) -> (int, dict):
         headers = Headers(x_requers_id=uuid4().__str__(), host='localhost').dict(by_alias=True)
-        result = post(url=self.url, json=orjson.dumps(data), auth=self.auth, headers=headers)
+        result = post(url=self.url, json=data, auth=self.auth, headers=headers)
         try:
             res = result.json()
         except:

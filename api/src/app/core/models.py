@@ -18,6 +18,7 @@ class BaseOrJSONModel(BaseModel):
 class SyncProduct(BaseOrJSONModel):
     product_id: UUID
     price_id: UUID
+    product_name: str
 
 
 class Product(BaseOrJSONModel):

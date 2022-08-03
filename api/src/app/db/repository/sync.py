@@ -19,7 +19,8 @@ class SyncRepository(BaseRepository):
             query = await self.get_query(sync)
             for payment, cart, status in await session.execute(query):
                 if status.status:
-                    products = [SyncProduct(product_id=p.id, price_id=p.price_id) for p in cart.products]
+                    products = [SyncProduct(product_id=p.id, price_id=p.price_id, product_name=p.name)
+                                for p in cart.products]
                     self.statuses_ids.append(status.id)
                     await self.add_admin_item(payment, status, products)
                     if status.paid:
@@ -47,7 +48,7 @@ class SyncRepository(BaseRepository):
 
     async def add_auth_item(self, payment, status, products):
         self.auth_data.extend(
-            AuthPayment(user_id=payment.user_id, product_name=p.name, created_at=str(status.created_at))
+            AuthPayment(user_id=payment.user_id, product_name=p.product_name, created_at=str(status.created_at))
             for p in products
         )
 
