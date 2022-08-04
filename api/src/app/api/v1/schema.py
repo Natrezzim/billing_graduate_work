@@ -12,8 +12,6 @@ class ProductUserRequest(BaseOrJSONModel):
 
 
 class CreatePaymentUserRequest(BaseOrJSONModel):
-    id: UUID
-    user_id: UUID
     payment_system: str
     products: list[ProductUserRequest]
     description: str

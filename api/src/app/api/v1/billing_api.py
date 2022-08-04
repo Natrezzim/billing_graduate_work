@@ -51,7 +51,7 @@ async def transaction_test(payment_data: CreatePaymentUserRequest,
     user_id = auth_handler.decode_token(credentials.credentials)
     idempotence_key = uuid.uuid4()
     payment = CreatePayment(**payment_data.dict(), idempotence_uuid=idempotence_key, user_id=user_id)
-    payment_id = transaction.payment_create(payment)
+    payment_id = await transaction.payment_create(payment)
 
     yookassa_payment = Payment.create({
         "amount": {
@@ -66,9 +66,11 @@ async def transaction_test(payment_data: CreatePaymentUserRequest,
             "return_url": "http://moviesbilling.ddns.net/return-url"
         },
         "metadata": {
-            "user_id": user_id
+            "user_id": str(user_id),
+            "payment_id": str(payment_id)
         },
         "description": payment_data.description}, idempotence_key)
+    print("!!!!!!!!!!!!! payment_id", payment_id)
     update_payment = UpdatePayment(id=payment_id, payment_status=yookassa_payment.status, paid=yookassa_payment.paid)
 
     if await transaction.payment_update(update_payment):
