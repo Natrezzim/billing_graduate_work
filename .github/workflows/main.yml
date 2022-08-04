@@ -24,6 +24,15 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f api/src/app/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./api/src/app
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
+      - name: Build, tag, and push image billing-cron
+        env:
+          CR_REGISTRY: crpis5t0f3nv1ncr2fe9
+          CR_REPOSITORY: billing-cron
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker build -f api/src/cron/Dockerfile -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG ./api/src/app
+          docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
       - name: Build, tag, and push image billing-nginx
         env:
           CR_REGISTRY: crpis5t0f3nv1ncr2fe9

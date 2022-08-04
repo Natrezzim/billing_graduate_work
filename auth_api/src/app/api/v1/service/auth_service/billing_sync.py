@@ -1,5 +1,6 @@
+
 from flask import Blueprint, request
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields, ValidationError
 
 from app.data.datastore.roles_datastore import RolesCRUD
 
@@ -29,16 +30,24 @@ class BillingSyncAPI(Resource):
     @staticmethod
     @billing_sync_namespace.expect(sync_model)
     def post():
-        body = request.get_json()
-        for item in body['items']:
-            if UserDataStore.get_user_info(item['user_id']) is not None:
-                subscribe_role = Role.query.filter_by(role_type='subscribe').one_or_none()
-                if subscribe_role is not None and item['product_name'] in ['1 month', '3 months', '6 months', '1 year']:
-                    if UserRole.query.filter_by(user_id=item['user_id'], role_id=subscribe_role.id).one_or_none() \
-                            is None:
-                        RolesCRUD.add_role_to_user(item['user_id'], subscribe_role.id)
-                        return HTTPStatus.OK
-                    return {"error": {"message": "User with this role already exist"}}, HTTPStatus.BAD_REQUEST
-                return {"error": {"message": "Role not found or wrong product_name field"}}, HTTPStatus.BAD_REQUEST
-            return {"error": {"message": "User not found"}}, HTTPStatus.BAD_REQUEST
-        return {"error": {"message": "Wrong data in items"}}, HTTPStatus.BAD_REQUEST
+        try:
+            body = request.get_json(force=True)
+            for item in body['items']:
+                if UserDataStore.get_user_info(item['user_id']) is not None:
+                    subscribe_role = Role.query.filter_by(role_type='subscribe').one_or_none()
+                    if subscribe_role is not None and item['product_name'] in ['1 month', '3 months', '6 months', '1 year']:
+                        if UserRole.query.filter_by(user_id=item['user_id'], role_id=subscribe_role.id).one_or_none() \
+                                is None:
+                            RolesCRUD.add_role_to_user(item['user_id'], subscribe_role.id)
+            result = {
+                'status': 'success',
+                'details': {
+                    'updated': body['total'],
+                    'created': body['total']
+                }
+            }
+
+            return result, HTTPStatus.CREATED
+        except ValidationError:
+            return {'error': 'Incorrect JSON schema'}, HTTPStatus.BAD_REQUEST
+

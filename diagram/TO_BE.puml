@@ -15,8 +15,9 @@ database "PostgreSQL" as billing_postgres
 component "API" as billing_api
 
 component "Nginx" as billing_nginx
-component "ETL/Cron" as billing_etl
-billing_etl <---> billing_postgres
+component "Cron" as billing_cron
+billing_cron <---> billing_postgres
+billing_cron <---> auth
 billing_api <---> billing_nginx
 billing_api <-up-> paysys
 
@@ -24,7 +25,7 @@ billing_api <-up-> paysys
 
 billing_nginx <---> auth
 billing_api <---> billing_postgres
-billing_etl <-right-> billing_django
+billing_cron <-right-> billing_django
 auth <--> user
 
 legend left
