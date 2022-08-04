@@ -49,7 +49,6 @@ app = create_app()
 @app.on_event('startup')
 async def startup():
     await test_connection()
-    await init_db()
 
 
 @app.on_event('shutdown')
