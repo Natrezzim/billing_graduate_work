@@ -1,4 +1,5 @@
 from uuid import UUID
+from functools import lru_cache
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -61,3 +62,8 @@ class PaymentRepository(BaseRepository):
             session.add(instance)
             session.flush()
             return instance
+
+
+@lru_cache
+def get_payments_repository():
+    return PaymentRepository()

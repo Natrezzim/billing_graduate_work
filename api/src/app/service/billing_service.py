@@ -2,33 +2,23 @@ from functools import lru_cache
 
 from fastapi import Depends
 
-from app.db.postgres import AsyncSession, get_session
-from app.models.billing_models import Payments, PaymentsCreate
+# from app.models.billing_models import Payments, PaymentsCreate
+from app.core.models import CreatePayment, UpdatePayment
+from app.db.repository.payments import PaymentRepository, get_payments_repository
 
 
 class PaymentsService:
-    def __init__(self, storage: AsyncSession):
-        self.storage = storage
+    def __init__(self, repository: PaymentRepository):
+        self.repository = repository
 
-    async def payment_create(self, payment_data: PaymentsCreate, payment):
-        yookassa_response = payment
-        payment_data = Payments(
-            currency=payment_data.currency,
-            value=payment_data.value,
-            description=yookassa_response.description,
-            created_at=yookassa_response.created_at,
-            payment_id=yookassa_response.id,
-            user_id=payment_data.user_id
-        )
-        self.storage.add(payment_data)
-        await self.storage.commit()
-        await self.storage.refresh(payment_data)
+    async def payment_update(self, payment_data: UpdatePayment):
+        await self.repository.update_payment(payment_data)
+        return True
 
-        return {'status': yookassa_response.status,
-                'confirmation_url': yookassa_response.confirmation.confirmation_url,
-                'return_url': yookassa_response.confirmation.return_url}
+    async def payment_create(self, payment_data: CreatePayment):
+        return await self.repository.create_new_payment(payment_data)
 
 
 @lru_cache()
-def get_payments_service(storage: AsyncSession = Depends(get_session)) -> PaymentsService:
-    return PaymentsService(storage)
+def get_payments_service(repository: PaymentRepository = Depends(get_payments_repository)) -> PaymentsService:
+    return PaymentsService(repository)
