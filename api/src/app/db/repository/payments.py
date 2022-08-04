@@ -1,4 +1,5 @@
 from uuid import UUID
+from functools import lru_cache
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,7 +31,12 @@ class PaymentRepository(BaseRepository):
         cart = Cart()
         for product in products:
             product = await self.get_or_create(
-                session, Products, name=product.name, value=product.value, currency=product.currency, id=product.id
+                session, Products,
+                name=product.name,
+                price_id=product.price_id,
+                value=product.value,
+                currency=product.currency,
+                id=product.id
             )
             cart.products.append(product)
         session.add(cart)
@@ -61,3 +67,8 @@ class PaymentRepository(BaseRepository):
             session.add(instance)
             session.flush()
             return instance
+
+
+@lru_cache
+def get_payments_repository():
+    return PaymentRepository()

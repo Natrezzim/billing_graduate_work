@@ -1,5 +1,6 @@
+import uuid
 from typing import List, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import orjson
 from pydantic import BaseModel, Field
@@ -56,8 +57,8 @@ class AuthPayment(BaseOrJSONModel):
 
 
 class CreatePayment(BaseOrJSONModel):
-    id: UUID
-    user_id: UUID
+    id: UUID = Field(default_factory=uuid4)
+    user_id: UUID = None
     idempotence_uuid: UUID
     payment_system: str
     products: list[Product]
